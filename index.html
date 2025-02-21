@@ -455,7 +455,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Định dạng không hợp lệ',
-                    text: 'Chỉ cho phép số, dấu phẩy và dấu gạch ngang!',
+                    html: '1. Chỉ cho phép số, dấu phẩy và dấu gạch ngang!<br>2. Phải có ít nhất một dấu gạch ngang (-).',
                 })
             } else if (scores.length !== players.length) {
                 Swal.fire({
@@ -771,8 +771,13 @@
 
         // Kiểm tra dữ liệu đầu vào hợp lệ
         function validateInput(inputString) {
+            // Kiểm tra định dạng hợp lệ (chỉ cho phép số, dấu phẩy, dấu gạch ngang và khoảng trắng)
             var regex = /^[\d,-\s]+$/;
-            return regex.test(inputString);
+
+            // Kiểm tra xem có ít nhất một dấu '-' không
+            var hasNegativeSign = inputString.includes('-');
+
+            return regex.test(inputString) && hasNegativeSign;
         }
 
         // Áp dụng theme khi tải trang
