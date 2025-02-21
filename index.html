@@ -358,7 +358,8 @@
 
         <form id="score-form">
             <div class="form-group">
-                <label for="score-input">Nhập Điểm:</label>
+                <label for="score-input">Nhập Điểm: <i id="score-help-icon" class="fas fa-question-circle text-primary"
+                                                       style="cursor: pointer; margin-left: 5px;"></i></label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="score-input" placeholder="1,-,7,5,6">
                     <button type="submit" id="add-scores" class="btn btn-primary">
@@ -433,6 +434,40 @@
                     icon: 'error'
                 });
             }
+        });
+
+        // Xử lý hiển thị hướng dẫn nhập điểm
+        $('#score-help-icon').click(function () {
+            Swal.fire({
+                title: 'Hướng dẫn nhập điểm',
+                html: `
+                    <div class="text-start">
+                        <p><strong>Cách nhập điểm:</strong></p>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item">Nhập điểm cho từng người chơi, cách nhau bởi dấu phẩy (,)</li>
+                            <li class="list-group-item">Sử dụng dấu gạch ngang (-) cho người thắng cuộc</li>
+                            <li class="list-group-item">Số lượng điểm phải bằng số lượng người chơi</li>
+                        </ul>
+
+                        <p><strong>Ví dụ:</strong></p>
+                        <div class="alert alert-info">
+                            <p class="mb-2"><strong>Giả sử có 3 người chơi: A, B, C</strong></p>
+                            <p class="mb-1">• Người A thắng, B bị -5 điểm, C bị -3 điểm:</p>
+                            <code>-, 5, 3</code><br><br>
+                            <p class="mb-1">• Người B thắng, A bị -4 điểm, C bị -6 điểm:</p>
+                            <code>4, -, 6</code>
+                        </div>
+
+                        <p><strong>Lưu ý:</strong></p>
+                        <ul class="list-group">
+                            <li class="list-group-item text-danger">Phải có ít nhất một dấu gạch ngang (-) để chỉ người thắng</li>
+                            <li class="list-group-item">Người thắng sẽ nhận tổng điểm của những người thua</li>
+                        </ul>
+                    </div>
+                `,
+                icon: 'info',
+                width: '600px'
+            });
         });
 
         // Xử lý thêm điểm
