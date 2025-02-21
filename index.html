@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <title>Tính Điểm</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/86670683">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GFJ44VE67C"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+        gtag('config', 'G-GFJ44VE67C');
+    </script>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #ff477e;
+            --success-color: #4ade80;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #0ea5e9;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            --primary-color: #6366f1;
+            --secondary-color: #818cf8;
+            --accent-color: #ff6b99;
+            --background-color: #1e293b;
+            --text-color: #e2e8f0;
+            --card-bg: #2a3547;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: var(--transition);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+        }
+
+        body.dark-mode .app-header {
+            border-bottom-color: #3a4556;
+        }
+
+        .app-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        /* Form Styling */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            height: 52px;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            transition: var(--transition);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        body.dark-mode .form-control {
+            border-color: #4b5563;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        body.dark-mode .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .input-help-text {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        body.dark-mode .input-help-text {
+            color: #a1a1aa;
+        }
+
+        /* Button Styling */
+        .btn {
+            font-weight: 600;
+            height: 52px;
+            padding: 10px 25px;
+            border-radius: 10px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+
+        .btn-info {
+            background-color: var(--info-color);
+            border-color: var(--info-color);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Table Styling */
+        .player-table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .player-table thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .player-table th {
+            padding: 15px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .player-table tbody tr {
+            background-color: var(--card-bg);
+            transition: var(--transition);
+        }
+
+        .player-table tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        body.dark-mode .player-table tbody tr:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        .player-table td {
+            padding: 15px;
+            border-top: 1px solid #eaeaea;
+        }
+
+        body.dark-mode .player-table td {
+            border-top-color: #3a4556;
+        }
+
+        /* Positive and negative score styling */
+        .positive-score {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .negative-score {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        /* Dark mode toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            padding: 5px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Divider */
+        .divider {
+            margin: 30px 0;
+            height: 1px;
+            background-color: #e0e0e0;
+        }
+
+        body.dark-mode .divider {
+            background-color: #4b5563;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 20px;
+                margin: 10px;
+                border-radius: 8px;
+            }
+
+            .app-title {
+                font-size: 1.8rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-group .btn {
+                width: 100%;
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+        }
+
+        body.dark-mode .empty-state {
+            color: #a1a1aa;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        body.dark-mode .empty-state i {
+            color: #4b5563;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="app-container fade-in">
+        <div class="app-header">
+            <h1 class="app-title">Tính Điểm</h1>
+            <button id="dark-mode-toggle" class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <form id="player-form">
+            <div class="form-group">
+                <label for="player-name">Nhập Tên Người Chơi:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="player-name" placeholder="Tên người chơi">
+                    <button type="submit" id="add-player" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Thêm
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="divider"></div>
+
+        <form id="score-form">
+            <div class="form-group">
+                <label for="score-input">Nhập Điểm:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="score-input" placeholder="1,-,7,5,6">
+                    <button type="submit" id="add-scores" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Thêm
+                    </button>
+                </div>
+                <span class="input-help-text">
+                        <i class="fas fa-info-circle"></i> Nếu điểm là dấu gạch ngang (-), điểm của người chơi sẽ là tổng điểm của tất cả các người chơi còn lại
+                    </span>
+            </div>
+        </form>
+
+        <div class="divider"></div>
+
+        <table class="player-table" id="player-table">
+            <thead>
+            <tr>
+                <th width="60%">Tên Người Chơi</th>
+                <th width="40%">Tổng Điểm</th>
+            </tr>
+            </thead>
+            <tbody id="score-table">
+            <!-- Dữ liệu sẽ được thêm bằng JavaScript -->
+            </tbody>
+        </table>
+
+        <div id="empty-state" class="empty-state">
+            <i class="fas fa-users"></i>
+            <p>Chưa có người chơi nào. Vui lòng thêm người chơi để bắt đầu.</p>
+        </div>
+
+        <div class="btn-group">
+            <button id="reset-button" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> Xóa Điểm
+            </button>
+            <button id="history-button" class="btn btn-info">
+                <i class="fas fa-history"></i> Xem Lịch Sử
+            </button>
+            <button id="split-button" class="btn btn-warning">
+                <i class="fas fa-hand-holding-usd"></i> Chia Tiền
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(function () {
+        // Khởi tạo dữ liệu từ localStorage
+        var players = JSON.parse(localStorage.getItem('players')) || [];
+        var matches = JSON.parse(localStorage.getItem('matches')) || [];
+
+        // Hiển thị bảng điểm
+        renderTable();
+
+        // Xử lý thêm người chơi mới
+        $('#player-form').submit(function (event) {
+            event.preventDefault();
+            var playerName = $('#player-name').val().trim();
+            if (playerName) {
+                players.push({
+                    name: playerName,
+                    score: 0
+                });
+                localStorage.setItem('players', JSON.stringify(players));
+                renderTable();
+                $('#player-name').val('');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng nhập tên người chơi',
+                    icon: 'error'
+                });
+            }
+        });
+
+        // Xử lý thêm điểm
+        $('#score-form').submit(function (event) {
+            event.preventDefault();
+            scoreInput = $('#score-input').val();
+
+            if (players.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa có người chơi',
+                    text: 'Vui lòng thêm người chơi trước khi nhập điểm!'
+                });
+                return;
+            }
+
+            var scores = scoreInput.split(',');
+
+            if (!validateInput(scoreInput)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Định dạng không hợp lệ',
+                    text: 'Chỉ cho phép số, dấu phẩy và dấu gạch ngang!',
+                })
+            } else if (scores.length !== players.length) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Số lượng không khớp',
+                    text: 'Số điểm nhập (' + scores.length + ') không khớp với số lượng người chơi (' + players.length + ')!'
+                })
+            } else {
+                var matchData = {
+                    timestamp: new Date().getTime(),
+                    players: []
+                };
+                for (var i = 0; i < players.length; i++) {
+                    var score = scores[i].trim();
+                    if (score === '-') {
+                        // Tính điểm cho người chơi này là tổng điểm của tất cả người chơi khác
+                        var points = sumNumericValues(scores);
+                    } else {
+                        var points = -parseInt(score);
+                    }
+                    players[i].score += points;
+                    matchData.players.push({
+                        name: players[i].name,
+                        score: points
+                    });
+                }
+                matches.push(matchData);
+                localStorage.setItem('players', JSON.stringify(players));
+                localStorage.setItem('matches', JSON.stringify(matches));
+                renderTable();
+                $('#score-input').val('');
+            }
+        });
+
+        // Xử lý nút reset
+        $('#reset-button').click(function () {
+            if (players.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Không có dữ liệu',
+                    text: 'Không có dữ liệu để xóa!'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Xác nhận xóa dữ liệu?',
+                text: "Bạn sẽ không thể hoàn tác sau khi xóa!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Xóa dữ liệu',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('players');
+                    localStorage.removeItem('matches');
+                    players = [];
+                    matches = [];
+                    renderTable();
+                    Swal.fire(
+                        'Đã xóa!',
+                        'Tất cả dữ liệu đã bị xóa.',
+                        'success'
+                    )
+                }
+            })
+        });
+
+        // Xử lý nút xem lịch sử
+        $('#history-button').click(function () {
+            if (matches.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Lịch sử trống',
+                    text: 'Chưa có lịch sử đấu nào được ghi lại!'
+                });
+                return;
+            }
+
+            var html = '<div class="history-container">';
+
+            for (var i = matches.length - 1; i >= 0; i--) {
+                var match = matches[i];
+                var timestamp = new Date(match.timestamp).toLocaleString();
+
+                html += '<div class="history-item">';
+                html += '<h5 class="history-timestamp">' + timestamp + '</h5>';
+                html += '<table class="table table-bordered">';
+                html += '<thead class="table-primary"><tr><th>Người Chơi</th><th>Điểm</th></tr></thead>';
+                html += '<tbody>';
+
+                for (var j = 0; j < match.players.length; j++) {
+                    var player = match.players[j];
+                    var scoreClass = player.score > 0 ? 'text-success' : player.score < 0 ? 'text-danger' : '';
+                    html += '<tr><td>' + player.name + '</td><td class="' + scoreClass + '">' + player.score + '</td></tr>';
+                }
+
+                html += '</tbody></table>';
+                html += '</div>';
+
+                if (i > 0) {
+                    html += '<hr>';
+                }
+            }
+
+            html += '</div>';
+
+            Swal.fire({
+                title: 'Lịch Sử Đấu',
+                html: html,
+                width: '600px',
+                customClass: {
+                    htmlContainer: 'history-container'
+                }
+            });
+        });
+
+        // Xử lý nút chia tiền
+        $('#split-button').click(function () {
+            if (players.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Không có dữ liệu',
+                    text: 'Vui lòng thêm người chơi trước khi chia tiền!'
+                });
+                return;
+            }
+
+            var debtors = [];
+            var creditors = [];
+            var totalPoints = 0;
+
+            // Tạo bản sao danh sách người chơi để không thay đổi điểm gốc
+            var playersCopy = players.map(function (player) {
+                return {name: player.name, score: player.score};
+            });
+
+            // Phân loại người trả nợ và người nhận nợ
+            playersCopy.forEach(function (player) {
+                totalPoints += player.score;
+                if (player.score < 0) {
+                    debtors.push(player);
+                } else if (player.score > 0) {
+                    creditors.push(player);
+                }
+            });
+
+            if (Math.abs(totalPoints) > 0.01) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Không thể chia tiền!',
+                    text: 'Tổng điểm không phải là 0 (hiện tại là ' + totalPoints + '). Vui lòng kiểm tra lại.',
+                });
+                return;
+            }
+
+            // Nếu không có ai nợ hoặc không ai được nợ
+            if (debtors.length === 0 || creditors.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Không cần chia tiền',
+                    text: 'Tất cả người chơi đều đang hòa (0 điểm) hoặc đều đang cùng nợ/được nợ.'
+                });
+                return;
+            }
+
+            // Tính toán các giao dịch chia tiền
+            var transactions = [];
+            var i = 0;
+            var j = 0;
+
+            while (i < debtors.length && j < creditors.length) {
+                var debtor = debtors[i];
+                var creditor = creditors[j];
+                var transferAmount = Math.min(Math.abs(debtor.score), creditor.score);
+
+                if (transferAmount > 0) {
+                    transactions.push({
+                        from: debtor.name,
+                        to: creditor.name,
+                        amount: transferAmount
+                    });
+                }
+
+                // Cập nhật số tiền còn lại
+                debtor.score += transferAmount;
+                creditor.score -= transferAmount;
+
+                // Chuyển sang người tiếp theo nếu đã giải quyết xong
+                if (Math.abs(debtor.score) < 0.01) {
+                    i++;
+                }
+                if (Math.abs(creditor.score) < 0.01) {
+                    j++;
+                }
+            }
+
+            // Tạo HTML cho kết quả chia tiền
+            var html = '<div class="split-result">';
+
+            if (transactions.length === 0) {
+                html += '<p class="text-center">Không có giao dịch nào cần thực hiện.</p>';
+            } else {
+                html += '<table class="table table-hover transaction-table">';
+                html += '<thead class="table-primary"><tr><th>Người trả</th><th></th><th>Người nhận</th><th>Số tiền</th></tr></thead>';
+                html += '<tbody>';
+
+                for (var t = 0; t < transactions.length; t++) {
+                    var transaction = transactions[t];
+                    html += `<tr>
+                            <td><strong>${transaction.from}</strong></td>
+                            <td><i class="fas fa-arrow-right text-primary"></i></td>
+                            <td><strong>${transaction.to}</strong></td>
+                            <td><span class="badge bg-success">${transaction.amount}</span></td>
+                        </tr>`;
+                }
+
+                html += '</tbody></table>';
+            }
+
+            html += '</div>';
+
+            Swal.fire({
+                title: 'Kết Quả Chia Tiền',
+                html: html,
+                width: '600px'
+            });
+        });
+
+        // Xử lý nút chuyển đổi giao diện sáng/tối
+        $('#dark-mode-toggle').click(function () {
+            $('body').toggleClass('dark-mode');
+            updateThemeIcon();
+
+            // Lưu trạng thái theme vào localStorage
+            if ($('body').hasClass('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Kiểm tra và áp dụng theme đã lưu
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                $('body').addClass('dark-mode');
+            }
+            updateThemeIcon();
+        }
+
+        // Cập nhật icon theo theme
+        function updateThemeIcon() {
+            if ($('body').hasClass('dark-mode')) {
+                $('#dark-mode-toggle i').removeClass('fa-moon').addClass('fa-sun');
+            } else {
+                $('#dark-mode-toggle i').removeClass('fa-sun').addClass('fa-moon');
+            }
+        }
+
+        // Hiển thị bảng điểm
+        function renderTable() {
+            $('#score-table').empty();
+
+            if (players.length === 0) {
+                $('#player-table').hide();
+                $('#empty-state').show();
+                return;
+            }
+
+            $('#empty-state').hide();
+            $('#player-table').show();
+
+            players.forEach(function (player) {
+                var scoreClass = player.score > 0 ? 'positive-score' : player.score < 0 ? 'negative-score' : '';
+                var tr = $('<tr>');
+                tr.append($('<td>').text(player.name));
+                tr.append($('<td>').addClass(scoreClass).text(player.score));
+                $('#score-table').append(tr);
+            });
+        }
+
+        // Tính tổng các giá trị số
+        function sumNumericValues(values) {
+            let sum = 0;
+            for (let i = 0; i < values.length; i++) {
+                const value = values[i].trim();
+                if (value !== '-' && !isNaN(Number(value))) {
+                    sum += Number(value);
+                }
+            }
+            return sum;
+        }
+
+        // Kiểm tra dữ liệu đầu vào hợp lệ
+        function validateInput(inputString) {
+            var regex = /^[\d,-\s]+$/;
+            return regex.test(inputString);
+        }
+
+        // Áp dụng theme khi tải trang
+        applyTheme();
+    });
+</script>
+</body>
+</html>
