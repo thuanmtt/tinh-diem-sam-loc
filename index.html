@@ -731,9 +731,26 @@
             $('#empty-state').hide();
             $('#player-table').show();
 
-            players.forEach(function (player) {
+            // Tìm người chơi có điểm thấp nhất
+            let lowestScore = Infinity;
+            let lowestScoreIndex = -1;
+
+            players.forEach(function (player, index) {
+                if (player.score < lowestScore) {
+                    lowestScore = player.score;
+                    lowestScoreIndex = index;
+                }
+            });
+
+            players.forEach(function (player, index) {
                 var scoreClass = player.score > 0 ? 'positive-score' : player.score < 0 ? 'negative-score' : '';
                 var tr = $('<tr>');
+
+                // Thêm lớp font-weight-bold nếu là người chơi có điểm thấp nhất
+                if (index === lowestScoreIndex) {
+                    tr.addClass('fw-bold negative-score');
+                }
+
                 tr.append($('<td>').text(player.name));
                 tr.append($('<td>').addClass(scoreClass).text(player.score));
                 $('#score-table').append(tr);
