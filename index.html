@@ -359,16 +359,16 @@
         <form id="score-form">
             <div class="form-group">
                 <label>Nhập Điểm: <i id="score-help-icon" class="fas fa-question-circle text-primary"
-                                                       style="cursor: pointer; margin-left: 5px;"></i></label>
+                                     style="cursor: pointer; margin-left: 5px;"></i></label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="score-input" placeholder="1,-,7,5,6">
                     <button type="submit" id="add-scores" class="btn btn-primary">
                         <i class="fas fa-plus-circle"></i> Thêm
                     </button>
                 </div>
-                <span class="input-help-text">
-                        <i class="fas fa-info-circle"></i> Nếu điểm là dấu gạch ngang (-), điểm của người chơi sẽ là tổng điểm của tất cả các người chơi còn lại
-                    </span>
+<!--                <span class="input-help-text">-->
+                <!--                        <i class="fas fa-info-circle"></i> Nếu điểm là dấu gạch ngang (-), điểm của người chơi sẽ là tổng điểm của tất cả các người chơi còn lại-->
+                <!--                    </span>-->
             </div>
         </form>
 
@@ -768,12 +768,10 @@
 
             // Tìm người chơi có điểm thấp nhất
             let lowestScore = Infinity;
-            let lowestScoreIndex = -1;
 
             players.forEach(function (player, index) {
-                if (player.score < lowestScore) {
+                if (player.score < lowestScore && player.score !== 0) {
                     lowestScore = player.score;
-                    lowestScoreIndex = index;
                 }
             });
 
@@ -782,7 +780,7 @@
                 var tr = $('<tr>');
 
                 // Thêm lớp font-weight-bold nếu là người chơi có điểm thấp nhất
-                if (index === lowestScoreIndex) {
+                if (player.score === lowestScore) {
                     tr.addClass('fw-bold negative-score');
                 }
 
