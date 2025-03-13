@@ -821,17 +821,20 @@
         applyTheme();
 
         $('#share-button').click(function () {
-            if (players.length === 0) {
+            if (players.length === 0 && matches.length === 0) {
                 Swal.fire({
                     icon: 'info',
                     title: 'Không có dữ liệu',
-                    text: 'Vui lòng thêm người chơi trước khi chia sẻ kết quả!'
+                    text: 'Vui lòng thêm người chơi hoặc trận đấu trước khi chia sẻ!'
                 });
                 return;
             }
 
             // Chuyển đổi dữ liệu thành chuỗi JSON
-            let data = JSON.stringify(players);
+            let data = {
+                players: players,
+                matches: matches
+            };
 
             // Mã hóa với LZString
             let compressedData = LZString.compressToEncodedURIComponent(data);
@@ -870,14 +873,20 @@
             if (compressedData) {
                 try {
                     let decodedData = LZString.decompressFromEncodedURIComponent(compressedData);
-                    let loadedPlayers = JSON.parse(decodedData);
+                    let loadedData = JSON.parse(decodedData);
 
-                    if (Array.isArray(loadedPlayers)) {
-                        players = loadedPlayers;
+                    if (loadedData.players && Array.isArray(loadedData.players)) {
+                        players = loadedData.players;
                         localStorage.setItem('players', JSON.stringify(players));
-                        renderTable();
-                        Swal.fire('Dữ liệu đã được tải!', '', 'success');
                     }
+
+                    if (loadedData.matches && Array.isArray(loadedData.matches)) {
+                        matches = loadedData.matches;
+                        localStorage.setItem('matches', JSON.stringify(matches));
+                    }
+
+                    renderTable();
+                    Swal.fire('Dữ liệu đã được tải!', '', 'success');
                 } catch (e) {
                     console.error('Lỗi khi giải mã dữ liệu:', e);
                 }
