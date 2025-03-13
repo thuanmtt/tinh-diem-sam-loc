@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/86670683">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GFJ44VE67C"></script>
     <script>
@@ -366,7 +367,7 @@
                         <i class="fas fa-plus-circle"></i> Thêm
                     </button>
                 </div>
-<!--                <span class="input-help-text">-->
+                <!--                <span class="input-help-text">-->
                 <!--                        <i class="fas fa-info-circle"></i> Nếu điểm là dấu gạch ngang (-), điểm của người chơi sẽ là tổng điểm của tất cả các người chơi còn lại-->
                 <!--                    </span>-->
             </div>
@@ -400,6 +401,9 @@
             </button>
             <button id="split-button" class="btn btn-warning">
                 <i class="fas fa-hand-holding-usd"></i> Chia Tiền
+            </button>
+            <button id="share-button" class="btn btn-primary">
+                <i class="fas fa-share-alt"></i> Chia Sẻ
             </button>
         </div>
     </div>
@@ -815,6 +819,70 @@
 
         // Áp dụng theme khi tải trang
         applyTheme();
+
+        $('#share-button').click(function () {
+            if (players.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Không có dữ liệu',
+                    text: 'Vui lòng thêm người chơi trước khi chia sẻ kết quả!'
+                });
+                return;
+            }
+
+            // Chuyển đổi dữ liệu thành chuỗi JSON
+            let data = JSON.stringify(players);
+
+            // Mã hóa với LZString
+            let compressedData = LZString.compressToEncodedURIComponent(data);
+
+            // Tạo link chia sẻ
+            let shareUrl = `${window.location.origin}${window.location.pathname}?data=${compressedData}`;
+
+            // Hiển thị link để người dùng copy
+            Swal.fire({
+                title: 'Chia Sẻ Kết Quả',
+                input: 'text',
+                inputValue: shareUrl,
+                showCancelButton: true,
+                confirmButtonText: 'Sao chép',
+                cancelButtonText: 'Đóng',
+                didOpen: () => {
+                    const input = Swal.getInput();
+                    if (input) {
+                        input.select();
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        Swal.fire('Đã sao chép!', '', 'success');
+                    });
+                }
+            });
+        });
+
+        // Xử lý tải lại trang với dữ liệu được truyền qua URL
+        $(document).ready(function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const compressedData = urlParams.get('data');
+
+            if (compressedData) {
+                try {
+                    let decodedData = LZString.decompressFromEncodedURIComponent(compressedData);
+                    let loadedPlayers = JSON.parse(decodedData);
+
+                    if (Array.isArray(loadedPlayers)) {
+                        players = loadedPlayers;
+                        localStorage.setItem('players', JSON.stringify(players));
+                        renderTable();
+                        Swal.fire('Dữ liệu đã được tải!', '', 'success');
+                    }
+                } catch (e) {
+                    console.error('Lỗi khi giải mã dữ liệu:', e);
+                }
+            }
+        });
     });
 </script>
 </body>
