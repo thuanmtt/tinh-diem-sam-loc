@@ -830,19 +830,19 @@
                 return;
             }
 
-            // Chuyển đổi dữ liệu thành chuỗi JSON
-            let data = {
+            // Lấy dữ liệu cần chia sẻ
+            let dataToShare = {
                 players: players,
                 matches: matches
             };
 
             // Mã hóa với LZString
-            let compressedData = LZString.compressToEncodedURIComponent(data);
+            let compressedData = LZString.compressToBase64(JSON.stringify(dataToShare));
 
             // Tạo link chia sẻ
             let shareUrl = `${window.location.origin}${window.location.pathname}?data=${compressedData}`;
 
-            // Hiển thị link để người dùng copy
+            // Hiển thị link để sao chép
             Swal.fire({
                 title: 'Chia Sẻ Kết Quả',
                 input: 'text',
@@ -872,7 +872,7 @@
 
             if (compressedData) {
                 try {
-                    let decodedData = LZString.decompressFromEncodedURIComponent(compressedData);
+                    let decodedData = LZString.decompressFromBase64(compressedData);
                     let loadedData = JSON.parse(decodedData);
 
                     if (loadedData.players && Array.isArray(loadedData.players)) {
