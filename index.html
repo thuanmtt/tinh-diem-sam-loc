@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/86670683">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GFJ44VE67C"></script>
     <script>
@@ -366,7 +367,7 @@
                         <i class="fas fa-plus-circle"></i> Thêm
                     </button>
                 </div>
-<!--                <span class="input-help-text">-->
+                <!--                <span class="input-help-text">-->
                 <!--                        <i class="fas fa-info-circle"></i> Nếu điểm là dấu gạch ngang (-), điểm của người chơi sẽ là tổng điểm của tất cả các người chơi còn lại-->
                 <!--                    </span>-->
             </div>
@@ -398,6 +399,9 @@
             <button id="history-button" class="btn btn-info">
                 <i class="fas fa-history"></i> Xem Lịch Sử
             </button>
+            <button id="share-button" class="btn btn-success">
+                <i class="fas fa-share-alt"></i> Chia Sẻ
+            </button>
             <button id="split-button" class="btn btn-warning">
                 <i class="fas fa-hand-holding-usd"></i> Chia Tiền
             </button>
@@ -408,6 +412,57 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $(function () {
+        // Hàm để đọc tham số từ URL
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // Chạy khi trang đã tải xong
+        $(document).ready(function () {
+            // Kiểm tra xem có dữ liệu được chia sẻ qua URL không
+            const sharedData = getParameterByName('data');
+            if (sharedData) {
+                try {
+                    // Giải nén dữ liệu từ LZString
+                    const jsonData = LZString.decompressFromEncodedURIComponent(sharedData);
+                    // Parse JSON thành đối tượng JavaScript
+                    const parsedData = JSON.parse(jsonData);
+
+                    if (parsedData.players && parsedData.matches) {
+                        // Gán dữ liệu được chia sẻ
+                        players = parsedData.players;
+                        matches = parsedData.matches;
+
+                        // Lưu vào localStorage
+                        localStorage.setItem('players', JSON.stringify(players));
+                        localStorage.setItem('matches', JSON.stringify(matches));
+
+                        // Cập nhật giao diện
+                        renderTable();
+
+                        // Thông báo thành công
+                        Swal.fire(
+                            'Đã tải thành công!',
+                            'Dữ liệu được chia sẻ đã được tải.',
+                            'success'
+                        );
+                    }
+                } catch (e) {
+                    console.error('Lỗi khi xử lý dữ liệu được chia sẻ:', e);
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Dữ liệu chia sẻ không hợp lệ hoặc bị hỏng.',
+                        icon: 'error'
+                    });
+                }
+            }
+        });
+
         // Khởi tạo dữ liệu từ localStorage
         var players = JSON.parse(localStorage.getItem('players')) || [];
         var matches = JSON.parse(localStorage.getItem('matches')) || [];
@@ -719,6 +774,56 @@
                 title: 'Kết Quả Chia Tiền',
                 html: html,
                 width: '600px'
+            });
+        });
+
+        // Xử lý nút chia sẻ
+        $('#share-button').click(function () {
+            if (players.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Không có dữ liệu',
+                    text: 'Vui lòng thêm người chơi trước khi chia sẻ!'
+                });
+                return;
+            }
+
+            // Tạo đối tượng chứa dữ liệu cần chia sẻ
+            const shareData = {
+                players: players,
+                matches: matches
+            };
+
+            // Chuyển đối tượng thành chuỗi JSON
+            const jsonData = JSON.stringify(shareData);
+
+            // Mã hóa dữ liệu bằng LZString
+            const compressedData = LZString.compressToEncodedURIComponent(jsonData);
+
+            // Tạo URL chia sẻ
+            const shareUrl = window.location.origin + window.location.pathname + '?data=' + compressedData;
+
+            // Tạo một textarea ẩn để copy URL
+            const textarea = document.createElement('textarea');
+            textarea.value = shareUrl;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            // Hiển thị thông báo đã copy
+            Swal.fire({
+                title: 'Đã sao chép link!',
+                html: `
+            <p>Link chia sẻ đã được sao chép vào clipboard.</p>
+            <div class="input-group mt-3">
+                <input type="text" class="form-control" value="${shareUrl}" readonly>
+                <button class="btn btn-outline-primary" type="button" onclick="window.open('${shareUrl}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i>
+                </button>
+            </div>
+        `,
+                icon: 'success'
             });
         });
 
