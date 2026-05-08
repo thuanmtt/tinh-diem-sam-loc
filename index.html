@@ -627,38 +627,82 @@
                 return;
             }
 
-            var html = '<div class="history-container">';
+            // Tập hợp tất cả tên người chơi xuất hiện trong các trận (giữ thứ tự xuất hiện)
+            var playerNames = [];
+            var seen = {};
+            players.forEach(function (p) {
+                if (!seen[p.name]) {
+                    seen[p.name] = true;
+                    playerNames.push(p.name);
+                }
+            });
+            matches.forEach(function (m) {
+                m.players.forEach(function (p) {
+                    if (!seen[p.name]) {
+                        seen[p.name] = true;
+                        playerNames.push(p.name);
+                    }
+                });
+            });
 
+            // Tính tổng điểm theo tên
+            var totals = {};
+            playerNames.forEach(function (n) {
+                totals[n] = 0;
+            });
+            matches.forEach(function (m) {
+                m.players.forEach(function (p) {
+                    totals[p.name] = (totals[p.name] || 0) + p.score;
+                });
+            });
+
+            var html = '<div class="history-container" style="overflow-x:auto;">';
+            html += '<table class="table table-bordered table-sm" style="min-width:100%;">';
+            html += '<thead class="table-primary"><tr>';
+            html += '<th>Trận</th>';
+            playerNames.forEach(function (n) {
+                html += '<th>' + n + '</th>';
+            });
+            html += '</tr></thead>';
+            html += '<tbody>';
+
+            // Dòng đầu: tổng điểm
+            html += '<tr class="fw-bold table-secondary"><td>Tổng</td>';
+            playerNames.forEach(function (n) {
+                var total = totals[n] || 0;
+                var cls = total > 0 ? 'text-success' : total < 0 ? 'text-danger' : '';
+                html += '<td class="' + cls + '">' + total + '</td>';
+            });
+            html += '</tr>';
+
+            // Các dòng sau: từng trận (mới nhất ở trên)
             for (var i = matches.length - 1; i >= 0; i--) {
                 var match = matches[i];
                 var timestamp = new Date(match.timestamp).toLocaleString();
+                var scoreByName = {};
+                match.players.forEach(function (p) {
+                    scoreByName[p.name] = p.score;
+                });
 
-                html += '<div class="history-item">';
-                html += '<h5 class="history-timestamp">' + timestamp + '</h5>';
-                html += '<table class="table table-bordered">';
-                html += '<thead class="table-primary"><tr><th>Người Chơi</th><th>Điểm</th></tr></thead>';
-                html += '<tbody>';
-
-                for (var j = 0; j < match.players.length; j++) {
-                    var player = match.players[j];
-                    var scoreClass = player.score > 0 ? 'text-success' : player.score < 0 ? 'text-danger' : '';
-                    html += '<tr><td>' + player.name + '</td><td class="' + scoreClass + '">' + player.score + '</td></tr>';
-                }
-
-                html += '</tbody></table>';
-                html += '</div>';
-
-                if (i > 0) {
-                    html += '<hr>';
-                }
+                html += '<tr><td>' + timestamp + '</td>';
+                playerNames.forEach(function (n) {
+                    if (scoreByName.hasOwnProperty(n)) {
+                        var s = scoreByName[n];
+                        var cls = s > 0 ? 'text-success' : s < 0 ? 'text-danger' : '';
+                        html += '<td class="' + cls + '">' + s + '</td>';
+                    } else {
+                        html += '<td class="text-muted">-</td>';
+                    }
+                });
+                html += '</tr>';
             }
 
-            html += '</div>';
+            html += '</tbody></table></div>';
 
             Swal.fire({
                 title: 'Lịch Sử Đấu',
                 html: html,
-                width: '600px',
+                width: '800px',
                 customClass: {
                     htmlContainer: 'history-container'
                 }
