@@ -738,6 +738,41 @@
             border-radius: 8px;
         }
 
+        .history-table thead th.col-action {
+            width: 52px;
+        }
+
+        .history-table .col-action {
+            text-align: center;
+            padding: 6px 8px;
+        }
+
+        .btn-delete-row {
+            background: transparent;
+            color: var(--danger-color);
+            border: 1px solid transparent;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            padding: 0;
+        }
+
+        .btn-delete-row:hover {
+            background-color: rgba(239, 68, 68, 0.12);
+            border-color: rgba(239, 68, 68, 0.3);
+            transform: scale(1.05);
+        }
+
+        body.dark-mode .btn-delete-row:hover {
+            background-color: rgba(239, 68, 68, 0.18);
+        }
+
         /* Custom scrollbar */
         .history-table-wrapper::-webkit-scrollbar {
             width: 8px;
@@ -1079,34 +1114,35 @@
                 return;
             }
 
-            // Tập hợp tất cả tên người chơi xuất hiện trong các trận (giữ thứ tự xuất hiện)
             var playerNames = [];
-            var seen = {};
-            players.forEach(function (p) {
-                if (!seen[p.name]) {
-                    seen[p.name] = true;
-                    playerNames.push(p.name);
-                }
-            });
-            matches.forEach(function (m) {
-                m.players.forEach(function (p) {
+            var totals = {};
+            var currentOrder = 'desc';
+
+            function recomputeTotals() {
+                playerNames = [];
+                var seen = {};
+                players.forEach(function (p) {
                     if (!seen[p.name]) {
                         seen[p.name] = true;
                         playerNames.push(p.name);
                     }
                 });
-            });
-
-            // Tính tổng điểm theo tên
-            var totals = {};
-            playerNames.forEach(function (n) {
-                totals[n] = 0;
-            });
-            matches.forEach(function (m) {
-                m.players.forEach(function (p) {
-                    totals[p.name] = (totals[p.name] || 0) + p.score;
+                matches.forEach(function (m) {
+                    m.players.forEach(function (p) {
+                        if (!seen[p.name]) {
+                            seen[p.name] = true;
+                            playerNames.push(p.name);
+                        }
+                    });
                 });
-            });
+                totals = {};
+                playerNames.forEach(function (n) { totals[n] = 0; });
+                matches.forEach(function (m) {
+                    m.players.forEach(function (p) {
+                        totals[p.name] = (totals[p.name] || 0) + p.score;
+                    });
+                });
+            }
 
             function pad2(n) {
                 return n < 10 ? '0' + n : '' + n;
@@ -1129,7 +1165,6 @@
                 return 'score-zero';
             }
 
-            // Dòng đầu: tổng điểm (hiển thị như header tóm tắt, sticky)
             function buildTotalRow() {
                 var row = '<tr class="history-total-row">';
                 row += '<td class="total-label">Tổng</td>';
@@ -1138,11 +1173,11 @@
                     row += '<td class="score-cell ' + scoreClass(total) + '">' + formatScore(total) + '</td>';
                 });
                 row += '<td class="col-time"></td>';
+                row += '<td class="col-action"></td>';
                 row += '</tr>';
                 return row;
             }
 
-            // Hàm dựng phần thân bảng theo thứ tự sắp xếp ('desc' = mới nhất trước)
             function buildHistoryRows(order) {
                 var rows = buildTotalRow();
 
@@ -1174,61 +1209,115 @@
                         }
                     });
                     rows += '<td class="col-time">' + timestamp + '</td>';
+                    rows += '<td class="col-action">';
+                    rows += '<button type="button" class="btn-delete-row" data-match-idx="' + idx + '" title="Xóa dòng này">';
+                    rows += '<i class="fas fa-trash"></i>';
+                    rows += '</button>';
+                    rows += '</td>';
                     rows += '</tr>';
                 });
 
                 return rows;
             }
 
-            var html = '';
-            html += '<div class="history-toolbar">';
-            html += '<div class="history-stats"><strong>' + matches.length + '</strong> trận · <strong>' + playerNames.length + '</strong> người chơi</div>';
-            html += '<div class="history-sort-group" role="group" aria-label="Sắp xếp">';
-            html += '<button type="button" id="history-sort-desc" class="active">Mới nhất</button>';
-            html += '<button type="button" id="history-sort-asc">Cũ nhất</button>';
-            html += '</div></div>';
-            html += '<div class="history-table-wrapper">';
-            html += '<table class="history-table">';
-            html += '<thead><tr>';
-            html += '<th class="col-stt">#</th>';
-            playerNames.forEach(function (n) {
-                html += '<th>' + n + '</th>';
-            });
-            html += '<th class="col-time">Thời gian</th>';
-            html += '</tr></thead>';
-            html += '<tbody id="history-tbody">';
-            html += buildHistoryRows('desc');
-            html += '</tbody></table></div>';
-            html += '<div class="history-actions">';
-            html += '<button id="history-reset-button" class="btn btn-danger">';
-            html += '<i class="fas fa-trash-alt"></i> Xóa Điểm';
-            html += '</button></div>';
+            function buildModalHtml() {
+                var html = '';
+                html += '<div class="history-toolbar">';
+                html += '<div class="history-stats"><strong>' + matches.length + '</strong> trận · <strong>' + playerNames.length + '</strong> người chơi</div>';
+                html += '<div class="history-sort-group" role="group" aria-label="Sắp xếp">';
+                html += '<button type="button" id="history-sort-desc" class="' + (currentOrder === 'desc' ? 'active' : '') + '">Mới nhất</button>';
+                html += '<button type="button" id="history-sort-asc" class="' + (currentOrder === 'asc' ? 'active' : '') + '">Cũ nhất</button>';
+                html += '</div></div>';
+                html += '<div class="history-table-wrapper">';
+                html += '<table class="history-table">';
+                html += '<thead><tr>';
+                html += '<th class="col-stt">#</th>';
+                playerNames.forEach(function (n) {
+                    html += '<th>' + n + '</th>';
+                });
+                html += '<th class="col-time">Thời gian</th>';
+                html += '<th class="col-action"></th>';
+                html += '</tr></thead>';
+                html += '<tbody id="history-tbody">';
+                html += buildHistoryRows(currentOrder);
+                html += '</tbody></table></div>';
+                html += '<div class="history-actions">';
+                html += '<button id="history-reset-button" class="btn btn-danger">';
+                html += '<i class="fas fa-trash-alt"></i> Xóa Điểm';
+                html += '</button></div>';
+                return html;
+            }
+
+            function setSort(order) {
+                currentOrder = order;
+                $('#history-tbody').html(buildHistoryRows(order));
+                if (order === 'desc') {
+                    $('#history-sort-desc').addClass('active');
+                    $('#history-sort-asc').removeClass('active');
+                } else {
+                    $('#history-sort-asc').addClass('active');
+                    $('#history-sort-desc').removeClass('active');
+                }
+            }
+
+            function deleteMatchAt(idx) {
+                var match = matches[idx];
+                if (!match) return;
+                match.players.forEach(function (mp) {
+                    var p = players.find(function (pp) { return pp.name === mp.name; });
+                    if (p) p.score -= mp.score;
+                });
+                matches.splice(idx, 1);
+                localStorage.setItem('players', JSON.stringify(players));
+                localStorage.setItem('matches', JSON.stringify(matches));
+                renderTable();
+            }
+
+            function attachHandlers() {
+                $('#history-reset-button').off('click').on('click', function () {
+                    Swal.close();
+                    confirmAndResetData();
+                });
+
+                $('#history-sort-desc').off('click').on('click', function () { setSort('desc'); });
+                $('#history-sort-asc').off('click').on('click', function () { setSort('asc'); });
+
+                $('#history-tbody').off('click', '.btn-delete-row').on('click', '.btn-delete-row', function () {
+                    var idx = parseInt($(this).attr('data-match-idx'), 10);
+                    if (isNaN(idx) || !matches[idx]) return;
+                    Swal.fire({
+                        title: 'Xóa dòng này?',
+                        text: 'Điểm của trận sẽ được trừ lại khỏi tổng. Hành động này không thể hoàn tác.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Xóa',
+                        cancelButtonText: 'Hủy'
+                    }).then(function (result) {
+                        if (!result.isConfirmed) return;
+                        deleteMatchAt(idx);
+                        if (matches.length === 0) {
+                            Swal.close();
+                            return;
+                        }
+                        recomputeTotals();
+                        $(Swal.getHtmlContainer()).html(buildModalHtml());
+                        attachHandlers();
+                    });
+                });
+            }
+
+            recomputeTotals();
 
             Swal.fire({
                 title: 'Lịch Sử Đấu',
-                html: html,
+                html: buildModalHtml(),
                 width: '820px',
                 showConfirmButton: false,
                 showCloseButton: true,
                 didOpen: function () {
-                    $('#history-reset-button').on('click', function () {
-                        Swal.close();
-                        confirmAndResetData();
-                    });
-
-                    function setSort(order) {
-                        $('#history-tbody').html(buildHistoryRows(order));
-                        if (order === 'desc') {
-                            $('#history-sort-desc').addClass('active');
-                            $('#history-sort-asc').removeClass('active');
-                        } else {
-                            $('#history-sort-asc').addClass('active');
-                            $('#history-sort-desc').removeClass('active');
-                        }
-                    }
-
-                    $('#history-sort-desc').on('click', function () { setSort('desc'); });
-                    $('#history-sort-asc').on('click', function () { setSort('asc'); });
+                    attachHandlers();
                 }
             });
         });
