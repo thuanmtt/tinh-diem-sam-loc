@@ -1295,31 +1295,31 @@
                         confirmButtonText: 'Xóa',
                         cancelButtonText: 'Hủy'
                     }).then(function (result) {
-                        if (!result.isConfirmed) return;
-                        deleteMatchAt(idx);
-                        if (matches.length === 0) {
-                            Swal.close();
-                            return;
+                        if (result.isConfirmed) {
+                            deleteMatchAt(idx);
+                            if (matches.length === 0) return;
+                            recomputeTotals();
                         }
-                        recomputeTotals();
-                        $(Swal.getHtmlContainer()).html(buildModalHtml());
-                        attachHandlers();
+                        openHistoryModal();
                     });
                 });
             }
 
-            recomputeTotals();
+            function openHistoryModal() {
+                Swal.fire({
+                    title: 'Lịch Sử Đấu',
+                    html: buildModalHtml(),
+                    width: '820px',
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    didOpen: function () {
+                        attachHandlers();
+                    }
+                });
+            }
 
-            Swal.fire({
-                title: 'Lịch Sử Đấu',
-                html: buildModalHtml(),
-                width: '820px',
-                showConfirmButton: false,
-                showCloseButton: true,
-                didOpen: function () {
-                    attachHandlers();
-                }
-            });
+            recomputeTotals();
+            openHistoryModal();
         });
 
         // Xử lý nút chia tiền
