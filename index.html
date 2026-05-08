@@ -330,6 +330,257 @@
         body.dark-mode .empty-state i {
             color: #4b5563;
         }
+
+        /* History Modal */
+        .history-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        body.dark-mode .history-toolbar {
+            border-bottom-color: #3a4556;
+        }
+
+        .history-stats {
+            font-size: 0.9rem;
+            color: #6b7280;
+            text-align: left;
+        }
+
+        body.dark-mode .history-stats {
+            color: #94a3b8;
+        }
+
+        .history-stats strong {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .history-sort-group {
+            display: inline-flex;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--primary-color);
+        }
+
+        .history-sort-group button {
+            background: transparent;
+            color: var(--primary-color);
+            border: none;
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .history-sort-group button.active,
+        .history-sort-group button:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .history-table-wrapper {
+            max-height: 55vh;
+            overflow: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: var(--card-bg);
+        }
+
+        body.dark-mode .history-table-wrapper {
+            border-color: #3a4556;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .history-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            background: var(--primary-color);
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 10px;
+            text-align: center;
+            white-space: nowrap;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .history-table thead th.col-stt {
+            width: 56px;
+        }
+
+        .history-table thead th.col-time {
+            text-align: left;
+            min-width: 110px;
+        }
+
+        .history-table tbody td {
+            padding: 10px 12px;
+            border-top: 1px solid #eaeaea;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        body.dark-mode .history-table tbody td {
+            border-top-color: #3a4556;
+        }
+
+        .history-table tbody tr:nth-child(even) td {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        body.dark-mode .history-table tbody tr:nth-child(even) td {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .history-table tbody tr:hover td {
+            background-color: rgba(67, 97, 238, 0.08);
+        }
+
+        body.dark-mode .history-table tbody tr:hover td {
+            background-color: rgba(99, 102, 241, 0.15);
+        }
+
+        .history-table .col-stt {
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        body.dark-mode .history-table .col-stt {
+            color: #94a3b8;
+        }
+
+        .history-table .col-time {
+            text-align: left;
+            white-space: nowrap;
+            color: #6b7280;
+            font-size: 0.85rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        body.dark-mode .history-table .col-time {
+            color: #94a3b8;
+        }
+
+        .history-table .score-cell {
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+
+        .history-table .score-positive {
+            color: var(--success-color);
+        }
+
+        .history-table .score-negative {
+            color: var(--danger-color);
+        }
+
+        .history-table .score-zero {
+            color: #9ca3af;
+        }
+
+        .history-table .score-empty {
+            color: #cbd5e1;
+            font-weight: 400;
+        }
+
+        body.dark-mode .history-table .score-empty {
+            color: #475569;
+        }
+
+        .history-table .winner-cell {
+            background-color: rgba(74, 222, 128, 0.18) !important;
+            position: relative;
+        }
+
+        .history-table .winner-cell::after {
+            content: "\f521";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.7rem;
+            color: var(--warning-color);
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        .history-total-row td {
+            position: sticky;
+            top: 46px;
+            z-index: 2;
+            background-color: #eef2ff !important;
+            font-weight: 700;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        body.dark-mode .history-total-row td {
+            background-color: #2a3142 !important;
+        }
+
+        .history-total-row .total-label {
+            color: var(--primary-color);
+            text-align: left;
+            letter-spacing: 0.4px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .history-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .history-actions .btn {
+            height: auto;
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .history-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .history-sort-group {
+                align-self: flex-end;
+            }
+
+            .history-table {
+                font-size: 0.85rem;
+            }
+
+            .history-table thead th,
+            .history-table tbody td {
+                padding: 8px 6px;
+            }
+
+            .history-table .col-time {
+                font-size: 0.75rem;
+                min-width: 90px;
+            }
+
+            .history-total-row td {
+                top: 42px;
+            }
+        }
     </style>
 </head>
 
@@ -653,20 +904,43 @@
                 });
             });
 
-            // Hàm dựng phần thân bảng theo thứ tự sắp xếp ('desc' = mới nhất trước)
-            function buildHistoryRows(order) {
-                var rows = '';
+            function pad2(n) {
+                return n < 10 ? '0' + n : '' + n;
+            }
 
-                // Dòng đầu: tổng điểm
-                rows += '<tr class="fw-bold table-secondary"><td></td><td>Tổng</td>';
+            function formatHistoryTime(ts) {
+                var d = new Date(ts);
+                return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) +
+                    ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+            }
+
+            function formatScore(value) {
+                if (value > 0) return '+' + value;
+                return String(value);
+            }
+
+            function scoreClass(value) {
+                if (value > 0) return 'score-positive';
+                if (value < 0) return 'score-negative';
+                return 'score-zero';
+            }
+
+            // Dòng đầu: tổng điểm (hiển thị như header tóm tắt, sticky)
+            function buildTotalRow() {
+                var row = '<tr class="history-total-row">';
+                row += '<td class="total-label" colspan="2">Tổng điểm</td>';
                 playerNames.forEach(function (n) {
                     var total = totals[n] || 0;
-                    var cls = total > 0 ? 'text-success' : total < 0 ? 'text-danger' : '';
-                    rows += '<td class="' + cls + '">' + total + '</td>';
+                    row += '<td class="score-cell ' + scoreClass(total) + '">' + formatScore(total) + '</td>';
                 });
-                rows += '</tr>';
+                row += '</tr>';
+                return row;
+            }
 
-                // Các dòng sau: từng trận
+            // Hàm dựng phần thân bảng theo thứ tự sắp xếp ('desc' = mới nhất trước)
+            function buildHistoryRows(order) {
+                var rows = buildTotalRow();
+
                 var indices = matches.map(function (_, idx) { return idx; });
                 if (order === 'desc') {
                     indices.reverse();
@@ -674,20 +948,25 @@
 
                 indices.forEach(function (idx) {
                     var match = matches[idx];
-                    var timestamp = new Date(match.timestamp).toLocaleString();
+                    var timestamp = formatHistoryTime(match.timestamp);
                     var scoreByName = {};
+                    var maxScore = -Infinity;
                     match.players.forEach(function (p) {
                         scoreByName[p.name] = p.score;
+                        if (p.score > maxScore) maxScore = p.score;
                     });
 
-                    rows += '<tr><td>' + (idx + 1) + '</td><td>' + timestamp + '</td>';
+                    rows += '<tr>';
+                    rows += '<td class="col-stt">#' + (idx + 1) + '</td>';
+                    rows += '<td class="col-time">' + timestamp + '</td>';
                     playerNames.forEach(function (n) {
                         if (scoreByName.hasOwnProperty(n)) {
                             var s = scoreByName[n];
-                            var cls = s > 0 ? 'text-success' : s < 0 ? 'text-danger' : '';
-                            rows += '<td class="' + cls + '">' + s + '</td>';
+                            var cls = 'score-cell ' + scoreClass(s);
+                            if (s === maxScore && s > 0) cls += ' winner-cell';
+                            rows += '<td class="' + cls + '">' + formatScore(s) + '</td>';
                         } else {
-                            rows += '<td class="text-muted">-</td>';
+                            rows += '<td class="score-empty">—</td>';
                         }
                     });
                     rows += '</tr>';
@@ -697,16 +976,17 @@
             }
 
             var html = '';
-            html += '<div class="d-flex justify-content-end mb-2">';
-            html += '<div class="btn-group btn-group-sm" role="group" aria-label="Sắp xếp">';
-            html += '<button type="button" id="history-sort-desc" class="btn btn-primary">Mới nhất</button>';
-            html += '<button type="button" id="history-sort-asc" class="btn btn-outline-primary">Cũ nhất</button>';
+            html += '<div class="history-toolbar">';
+            html += '<div class="history-stats"><strong>' + matches.length + '</strong> trận · <strong>' + playerNames.length + '</strong> người chơi</div>';
+            html += '<div class="history-sort-group" role="group" aria-label="Sắp xếp">';
+            html += '<button type="button" id="history-sort-desc" class="active">Mới nhất</button>';
+            html += '<button type="button" id="history-sort-asc">Cũ nhất</button>';
             html += '</div></div>';
-            html += '<div class="history-container" style="overflow-x:auto;">';
-            html += '<table class="table table-bordered table-sm" style="min-width:100%;">';
-            html += '<thead class="table-primary"><tr>';
-            html += '<th>STT</th>';
-            html += '<th>Trận</th>';
+            html += '<div class="history-table-wrapper">';
+            html += '<table class="history-table">';
+            html += '<thead><tr>';
+            html += '<th class="col-stt">#</th>';
+            html += '<th class="col-time">Thời gian</th>';
             playerNames.forEach(function (n) {
                 html += '<th>' + n + '</th>';
             });
@@ -714,7 +994,7 @@
             html += '<tbody id="history-tbody">';
             html += buildHistoryRows('desc');
             html += '</tbody></table></div>';
-            html += '<div class="text-end mt-3">';
+            html += '<div class="history-actions">';
             html += '<button id="history-reset-button" class="btn btn-danger">';
             html += '<i class="fas fa-trash-alt"></i> Xóa Điểm';
             html += '</button></div>';
@@ -722,10 +1002,9 @@
             Swal.fire({
                 title: 'Lịch Sử Đấu',
                 html: html,
-                width: '800px',
-                customClass: {
-                    htmlContainer: 'history-container'
-                },
+                width: '820px',
+                showConfirmButton: false,
+                showCloseButton: true,
                 didOpen: function () {
                     $('#history-reset-button').on('click', function () {
                         Swal.close();
@@ -735,11 +1014,11 @@
                     function setSort(order) {
                         $('#history-tbody').html(buildHistoryRows(order));
                         if (order === 'desc') {
-                            $('#history-sort-desc').removeClass('btn-outline-primary').addClass('btn-primary');
-                            $('#history-sort-asc').removeClass('btn-primary').addClass('btn-outline-primary');
+                            $('#history-sort-desc').addClass('active');
+                            $('#history-sort-asc').removeClass('active');
                         } else {
-                            $('#history-sort-asc').removeClass('btn-outline-primary').addClass('btn-primary');
-                            $('#history-sort-desc').removeClass('btn-primary').addClass('btn-outline-primary');
+                            $('#history-sort-asc').addClass('active');
+                            $('#history-sort-desc').removeClass('active');
                         }
                     }
 
