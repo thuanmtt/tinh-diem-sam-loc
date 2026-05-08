@@ -615,7 +615,7 @@
         }
 
         .history-table thead th.col-time {
-            text-align: left;
+            text-align: right;
             min-width: 110px;
         }
 
@@ -624,6 +624,7 @@
             border-top: 1px solid var(--border-color);
             text-align: center;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
         .history-table tbody tr:nth-child(even) td {
@@ -645,14 +646,20 @@
         .history-table .col-stt {
             font-weight: 600;
             color: var(--text-muted);
+            min-width: 48px;
         }
 
         .history-table .col-time {
-            text-align: left;
+            text-align: right;
             white-space: nowrap;
             color: var(--text-muted);
             font-size: 0.85rem;
             font-variant-numeric: tabular-nums;
+            min-width: 110px;
+        }
+
+        .history-table thead th.col-time {
+            text-align: right;
         }
 
         .history-table .score-cell {
@@ -1125,11 +1132,12 @@
             // Dòng đầu: tổng điểm (hiển thị như header tóm tắt, sticky)
             function buildTotalRow() {
                 var row = '<tr class="history-total-row">';
-                row += '<td class="total-label" colspan="2">Tổng điểm</td>';
+                row += '<td class="total-label">Tổng</td>';
                 playerNames.forEach(function (n) {
                     var total = totals[n] || 0;
                     row += '<td class="score-cell ' + scoreClass(total) + '">' + formatScore(total) + '</td>';
                 });
+                row += '<td class="col-time"></td>';
                 row += '</tr>';
                 return row;
             }
@@ -1155,7 +1163,6 @@
 
                     rows += '<tr>';
                     rows += '<td class="col-stt">#' + (idx + 1) + '</td>';
-                    rows += '<td class="col-time">' + timestamp + '</td>';
                     playerNames.forEach(function (n) {
                         if (scoreByName.hasOwnProperty(n)) {
                             var s = scoreByName[n];
@@ -1166,6 +1173,7 @@
                             rows += '<td class="score-empty">—</td>';
                         }
                     });
+                    rows += '<td class="col-time">' + timestamp + '</td>';
                     rows += '</tr>';
                 });
 
@@ -1183,10 +1191,10 @@
             html += '<table class="history-table">';
             html += '<thead><tr>';
             html += '<th class="col-stt">#</th>';
-            html += '<th class="col-time">Thời gian</th>';
             playerNames.forEach(function (n) {
                 html += '<th>' + n + '</th>';
             });
+            html += '<th class="col-time">Thời gian</th>';
             html += '</tr></thead>';
             html += '<tbody id="history-tbody">';
             html += buildHistoryRows('desc');
