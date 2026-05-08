@@ -653,47 +653,66 @@
                 });
             });
 
-            var html = '<div class="history-container" style="overflow-x:auto;">';
+            // Hàm dựng phần thân bảng theo thứ tự sắp xếp ('desc' = mới nhất trước)
+            function buildHistoryRows(order) {
+                var rows = '';
+
+                // Dòng đầu: tổng điểm
+                rows += '<tr class="fw-bold table-secondary"><td></td><td>Tổng</td>';
+                playerNames.forEach(function (n) {
+                    var total = totals[n] || 0;
+                    var cls = total > 0 ? 'text-success' : total < 0 ? 'text-danger' : '';
+                    rows += '<td class="' + cls + '">' + total + '</td>';
+                });
+                rows += '</tr>';
+
+                // Các dòng sau: từng trận
+                var indices = matches.map(function (_, idx) { return idx; });
+                if (order === 'desc') {
+                    indices.reverse();
+                }
+
+                indices.forEach(function (idx) {
+                    var match = matches[idx];
+                    var timestamp = new Date(match.timestamp).toLocaleString();
+                    var scoreByName = {};
+                    match.players.forEach(function (p) {
+                        scoreByName[p.name] = p.score;
+                    });
+
+                    rows += '<tr><td>' + (idx + 1) + '</td><td>' + timestamp + '</td>';
+                    playerNames.forEach(function (n) {
+                        if (scoreByName.hasOwnProperty(n)) {
+                            var s = scoreByName[n];
+                            var cls = s > 0 ? 'text-success' : s < 0 ? 'text-danger' : '';
+                            rows += '<td class="' + cls + '">' + s + '</td>';
+                        } else {
+                            rows += '<td class="text-muted">-</td>';
+                        }
+                    });
+                    rows += '</tr>';
+                });
+
+                return rows;
+            }
+
+            var html = '';
+            html += '<div class="d-flex justify-content-end mb-2">';
+            html += '<div class="btn-group btn-group-sm" role="group" aria-label="Sắp xếp">';
+            html += '<button type="button" id="history-sort-desc" class="btn btn-primary">Mới nhất</button>';
+            html += '<button type="button" id="history-sort-asc" class="btn btn-outline-primary">Cũ nhất</button>';
+            html += '</div></div>';
+            html += '<div class="history-container" style="overflow-x:auto;">';
             html += '<table class="table table-bordered table-sm" style="min-width:100%;">';
             html += '<thead class="table-primary"><tr>';
+            html += '<th>STT</th>';
             html += '<th>Trận</th>';
             playerNames.forEach(function (n) {
                 html += '<th>' + n + '</th>';
             });
             html += '</tr></thead>';
-            html += '<tbody>';
-
-            // Dòng đầu: tổng điểm
-            html += '<tr class="fw-bold table-secondary"><td>Tổng</td>';
-            playerNames.forEach(function (n) {
-                var total = totals[n] || 0;
-                var cls = total > 0 ? 'text-success' : total < 0 ? 'text-danger' : '';
-                html += '<td class="' + cls + '">' + total + '</td>';
-            });
-            html += '</tr>';
-
-            // Các dòng sau: từng trận (mới nhất ở trên)
-            for (var i = matches.length - 1; i >= 0; i--) {
-                var match = matches[i];
-                var timestamp = new Date(match.timestamp).toLocaleString();
-                var scoreByName = {};
-                match.players.forEach(function (p) {
-                    scoreByName[p.name] = p.score;
-                });
-
-                html += '<tr><td>' + timestamp + '</td>';
-                playerNames.forEach(function (n) {
-                    if (scoreByName.hasOwnProperty(n)) {
-                        var s = scoreByName[n];
-                        var cls = s > 0 ? 'text-success' : s < 0 ? 'text-danger' : '';
-                        html += '<td class="' + cls + '">' + s + '</td>';
-                    } else {
-                        html += '<td class="text-muted">-</td>';
-                    }
-                });
-                html += '</tr>';
-            }
-
+            html += '<tbody id="history-tbody">';
+            html += buildHistoryRows('desc');
             html += '</tbody></table></div>';
             html += '<div class="text-end mt-3">';
             html += '<button id="history-reset-button" class="btn btn-danger">';
@@ -712,6 +731,20 @@
                         Swal.close();
                         confirmAndResetData();
                     });
+
+                    function setSort(order) {
+                        $('#history-tbody').html(buildHistoryRows(order));
+                        if (order === 'desc') {
+                            $('#history-sort-desc').removeClass('btn-outline-primary').addClass('btn-primary');
+                            $('#history-sort-asc').removeClass('btn-primary').addClass('btn-outline-primary');
+                        } else {
+                            $('#history-sort-asc').removeClass('btn-outline-primary').addClass('btn-primary');
+                            $('#history-sort-desc').removeClass('btn-primary').addClass('btn-outline-primary');
+                        }
+                    }
+
+                    $('#history-sort-desc').on('click', function () { setSort('desc'); });
+                    $('#history-sort-asc').on('click', function () { setSort('asc'); });
                 }
             });
         });
