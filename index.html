@@ -10,6 +10,7 @@
     <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/86670683">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GFJ44VE67C"></script>
     <script>
@@ -1061,6 +1062,9 @@
         var players = JSON.parse(localStorage.getItem('players')) || [];
         var matches = JSON.parse(localStorage.getItem('matches')) || [];
 
+        // Lưu điểm hiển thị trước đó để tạo animation count-up (không ảnh hưởng data)
+        var previousDisplayedScores = {};
+
         // Hiển thị bảng điểm
         renderTable();
 
@@ -1656,6 +1660,8 @@
                 }
             });
 
+            var newDisplayedScores = {};
+
             players.forEach(function (player, index) {
                 var scoreClass = player.score > 0 ? 'positive-score' : player.score < 0 ? 'negative-score' : '';
                 var tr = $('<tr>');
@@ -1666,13 +1672,35 @@
                 }
 
                 tr.append($('<td>').text(player.name));
-                var scoreCell = $('<td>').addClass(scoreClass).text(player.score);
+                var scoreCell = $('<td>').addClass(scoreClass);
+                var scoreSpan = $('<span>').addClass('score-value').text(player.score);
+                scoreCell.append(scoreSpan);
                 if (player.score === highestScore) {
                     scoreCell.append(' <i class="fas fa-crown crown-icon"></i>');
                 }
                 tr.append(scoreCell);
                 $('#score-table').append(tr);
+
+                // Animation số tăng/giảm bằng CountUp.js
+                var startValue = previousDisplayedScores.hasOwnProperty(player.name)
+                    ? previousDisplayedScores[player.name]
+                    : player.score;
+                newDisplayedScores[player.name] = player.score;
+
+                if (typeof countUp !== 'undefined' && startValue !== player.score) {
+                    var cu = new countUp.CountUp(scoreSpan[0], player.score, {
+                        startVal: startValue,
+                        duration: 3,
+                        useEasing: true,
+                        useGrouping: false
+                    });
+                    if (!cu.error) {
+                        cu.start();
+                    }
+                }
             });
+
+            previousDisplayedScores = newDisplayedScores;
         }
 
         // Tính tổng các giá trị số
