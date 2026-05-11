@@ -379,6 +379,12 @@
             font-weight: 700;
         }
 
+        .crown-icon {
+            color: #f59e0b;
+            margin-right: 4px;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+        }
+
         /* Dark mode toggle */
         .theme-toggle {
             background: rgba(99, 102, 241, 0.08);
@@ -1269,9 +1275,17 @@
             function buildTotalRow() {
                 var row = '<tr class="history-total-row">';
                 row += '<td class="total-label">Tổng</td>';
+                var maxTotal = -Infinity;
+                playerNames.forEach(function (n) {
+                    var t = totals[n] || 0;
+                    if (t > maxTotal) maxTotal = t;
+                });
                 playerNames.forEach(function (n) {
                     var total = totals[n] || 0;
-                    row += '<td class="score-cell ' + scoreClass(total) + '">' + formatScore(total) + '</td>';
+                    var crown = (total === maxTotal && total > 0)
+                        ? ' <i class="fas fa-crown crown-icon"></i>'
+                        : '';
+                    row += '<td class="score-cell ' + scoreClass(total) + '">' + formatScore(total) + crown + '</td>';
                 });
                 row += '<td class="col-time"></td>';
                 row += '<td class="col-action"></td>';
@@ -1629,12 +1643,16 @@
             $('#empty-state').hide();
             $('#player-table').show();
 
-            // Tìm người chơi có điểm thấp nhất
+            // Tìm người chơi có điểm thấp nhất và cao nhất
             let lowestScore = Infinity;
+            let highestScore = -Infinity;
 
             players.forEach(function (player, index) {
                 if (player.score < lowestScore && player.score !== 0) {
                     lowestScore = player.score;
+                }
+                if (player.score > highestScore && player.score !== 0) {
+                    highestScore = player.score;
                 }
             });
 
@@ -1648,7 +1666,11 @@
                 }
 
                 tr.append($('<td>').text(player.name));
-                tr.append($('<td>').addClass(scoreClass).text(player.score));
+                var scoreCell = $('<td>').addClass(scoreClass).text(player.score);
+                if (player.score === highestScore) {
+                    scoreCell.append(' <i class="fas fa-crown crown-icon"></i>');
+                }
+                tr.append(scoreCell);
                 $('#score-table').append(tr);
             });
         }
