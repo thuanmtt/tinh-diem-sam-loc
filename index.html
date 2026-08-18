@@ -364,9 +364,16 @@
             font-weight: 600;
         }
 
-        .player-table td:last-child {
+        .player-table td:nth-child(2) {
             font-variant-numeric: tabular-nums;
             font-size: 1.05rem;
+        }
+
+        .player-table th.col-action-player,
+        .player-table td.col-action-player {
+            width: 48px;
+            padding: 10px 8px;
+            text-align: center;
         }
 
         /* Positive and negative score styling */
@@ -497,6 +504,11 @@
             .player-table th,
             .player-table td {
                 padding: 12px 14px;
+            }
+
+            .player-table th.col-action-player,
+            .player-table td.col-action-player {
+                padding: 10px 4px;
             }
         }
 
@@ -976,8 +988,9 @@
         <table class="player-table" id="player-table">
             <thead>
             <tr>
-                <th width="60%">Tên Người Chơi</th>
-                <th width="40%">Tổng Điểm</th>
+                <th width="55%">Tên Người Chơi</th>
+                <th width="35%">Tổng Điểm</th>
+                <th width="10%" class="col-action-player"></th>
             </tr>
             </thead>
             <tbody id="score-table">
@@ -1087,6 +1100,60 @@
                     icon: 'error'
                 });
             }
+        });
+
+        // Kiểm tra người chơi có thể xóa hay không: chỉ khi chưa xuất hiện trong lịch sử điểm
+        function canDeletePlayer(name) {
+            return !matches.some(function (match) {
+                return match.players.some(function (mp) {
+                    return mp.name === name;
+                });
+            });
+        }
+
+        // Xử lý xóa người chơi thêm nhầm (bind một lần, ủy quyền trên tbody)
+        $('#score-table').on('click', '.btn-delete-player', function () {
+            var idx = parseInt($(this).attr('data-player-idx'), 10);
+            if (isNaN(idx) || !players[idx]) return;
+
+            var playerName = players[idx].name;
+
+            // Kiểm tra lại trước khi xóa, tránh trường hợp dữ liệu đã thay đổi
+            if (!canDeletePlayer(playerName)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Không thể xóa',
+                    text: 'Người chơi "' + playerName + '" đã có trong lịch sử điểm!'
+                });
+                renderTable();
+                return;
+            }
+
+            Swal.fire({
+                title: 'Xóa người chơi?',
+                text: 'Xóa "' + playerName + '" khỏi danh sách người chơi?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    players.splice(idx, 1);
+                    // Xóa luôn điểm hiển thị cũ để animation không lấy giá trị của tên đã xóa
+                    delete previousDisplayedScores[playerName];
+                    localStorage.setItem('players', JSON.stringify(players));
+                    renderTable();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã xóa!',
+                        text: 'Đã xóa người chơi "' + playerName + '".',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
         });
 
         // Xử lý hiển thị hướng dẫn nhập điểm
@@ -1679,6 +1746,17 @@
                     scoreCell.append(' <i class="fas fa-crown crown-icon"></i>');
                 }
                 tr.append(scoreCell);
+
+                // Ô thao tác: chỉ người chơi chưa có trong lịch sử điểm mới hiện nút xóa
+                var actionCell = $('<td>').addClass('col-action-player');
+                if (canDeletePlayer(player.name)) {
+                    actionCell.append(
+                        '<button type="button" class="btn-delete-row btn-delete-player" data-player-idx="' + index +
+                        '" title="Xóa người chơi này"><i class="fas fa-trash-alt"></i></button>'
+                    );
+                }
+                tr.append(actionCell);
+
                 $('#score-table').append(tr);
 
                 // Animation số tăng/giảm bằng CountUp.js
