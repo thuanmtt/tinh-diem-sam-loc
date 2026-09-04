@@ -1085,7 +1085,15 @@
         $('#player-form').submit(function (event) {
             event.preventDefault();
             var playerName = $('#player-name').val().trim();
-            if (playerName) {
+            var isDuplicate = players.some(function (p) { return p.name === playerName; });
+            if (playerName && isDuplicate) {
+                // Tên là khóa nối giữa players và matches, trùng tên sẽ làm sai tổng điểm
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Tên đã tồn tại',
+                    text: 'Người chơi "' + playerName + '" đã có trong danh sách. Vui lòng dùng tên khác (ví dụ: "' + playerName + ' 2").'
+                });
+            } else if (playerName) {
                 players.push({
                     name: playerName,
                     score: 0
@@ -1102,13 +1110,34 @@
             }
         });
 
-        // Kiểm tra người chơi có thể xóa hay không: chỉ khi chưa xuất hiện trong lịch sử điểm
-        function canDeletePlayer(name) {
-            return !matches.some(function (match) {
-                return match.players.some(function (mp) {
-                    return mp.name === name;
+        // Số dòng cùng tên tối đa xuất hiện trong một ván của lịch sử.
+        // Đây là số dòng mang tên đó đang "được lịch sử tham chiếu" (thường là 0 hoặc 1).
+        function historyRowCountForName(name) {
+            var max = 0;
+            matches.forEach(function (match) {
+                var count = 0;
+                match.players.forEach(function (mp) {
+                    if (mp.name === name) count++;
                 });
+                if (count > max) max = count;
             });
+            return max;
+        }
+
+        // Kiểm tra dòng người chơi tại vị trí idx có thể xóa hay không.
+        // Xét theo DÒNG, không theo TÊN: nếu tên "D" xuất hiện 1 lần/ván trong lịch sử thì
+        // dòng "D" đầu tiên là dòng có lịch sử (không xóa được), các dòng "D" trùng thêm sau
+        // (thêm nhầm) vẫn xóa được. Khớp với deleteMatchAt vốn trừ điểm vào dòng đầu tiên cùng tên.
+        function canDeletePlayerAt(idx) {
+            var player = players[idx];
+            if (!player) return false;
+            var backedRows = historyRowCountForName(player.name);
+            if (backedRows === 0) return true;
+            var ordinal = 0;
+            for (var i = 0; i < idx; i++) {
+                if (players[i].name === player.name) ordinal++;
+            }
+            return ordinal >= backedRows;
         }
 
         // Xử lý xóa người chơi thêm nhầm (bind một lần, ủy quyền trên tbody)
@@ -1119,7 +1148,7 @@
             var playerName = players[idx].name;
 
             // Kiểm tra lại trước khi xóa, tránh trường hợp dữ liệu đã thay đổi
-            if (!canDeletePlayer(playerName)) {
+            if (!canDeletePlayerAt(idx)) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Không thể xóa',
@@ -1749,7 +1778,7 @@
 
                 // Ô thao tác: chỉ người chơi chưa có trong lịch sử điểm mới hiện nút xóa
                 var actionCell = $('<td>').addClass('col-action-player');
-                if (canDeletePlayer(player.name)) {
+                if (canDeletePlayerAt(index)) {
                     actionCell.append(
                         '<button type="button" class="btn-delete-row btn-delete-player" data-player-idx="' + index +
                         '" title="Xóa người chơi này"><i class="fas fa-trash-alt"></i></button>'
