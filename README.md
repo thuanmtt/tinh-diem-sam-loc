@@ -26,13 +26,12 @@ Link: https://thuanmtt.github.io/tinh-diem-sam-loc/
 
 ### Nhập điểm
 
-1. Nhập điểm số cho mỗi người chơi, cách nhau bởi dấu phẩy (,)
-2. Sử dụng dấu gạch ngang (-) cho người thắng cuộc
-3. Nhấn nút "Thêm" để cập nhật điểm số
+1. Nhấn nút "Nhập ván mới"
+2. Chạm vào tên người thắng ván đó
+3. Nhập số điểm mỗi người thua (gõ số hoặc dùng nút − / +; để trống là 0)
+4. Nhấn "Lưu ván"
 
-**Ví dụ:**
-- Với 3 người chơi (A, B, C), nếu A thắng, B thua 5 điểm, C thua 3 điểm, bạn nhập: `-,5,3`
-- Nếu B thắng, A thua 4 điểm, C thua 6 điểm, bạn nhập: `4,-,6`
+Người thắng tự động nhận tổng điểm của những người thua. Ví dụ A thắng, B thua 5, C thua 3 thì A được +8.
 
 ### Xem lịch sử
 

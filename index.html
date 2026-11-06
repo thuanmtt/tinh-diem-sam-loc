@@ -430,16 +430,252 @@
             border: none;
         }
 
-        /* Help icon */
-        #score-help-icon {
-            color: var(--primary-color);
-            font-size: 0.95rem;
-            margin-left: 8px;
+        /* Nút nhập ván mới */
+        .btn-new-round {
+            width: 100%;
+            font-size: 1.05rem;
+        }
+
+        /* Bảng nhập điểm một ván */
+        .round-hint {
+            margin: 0 0 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
+        .round-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 55vh;
+            overflow-y: auto;
+            padding: 2px;
+            text-align: left;
+        }
+
+        .round-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 60px;
+            padding: 6px 8px 6px 6px;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            background: var(--card-bg);
             transition: var(--transition);
         }
 
-        #score-help-icon:hover {
-            transform: scale(1.15);
+        .round-row.is-winner {
+            border-color: var(--warning-color);
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        .round-pick {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 48px;
+            padding: 0 4px;
+            border: none;
+            background: none;
+            color: var(--text-color);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .round-crown {
+            flex: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px dashed var(--border-color);
+            color: var(--text-muted);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .round-row.is-winner .round-crown {
+            border: none;
+            background: var(--warning-color);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
+        }
+
+        .round-name {
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .round-stepper {
+            flex: none;
+            display: flex;
+            align-items: center;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+        }
+
+        .round-step {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .round-step:active {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .round-points {
+            width: 52px;
+            height: 44px;
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .round-points:focus {
+            outline: none;
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .round-points::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .round-win {
+            flex: none;
+            display: none;
+            padding-right: 8px;
+            color: var(--success-color);
+            font-weight: 700;
+            font-size: 1.15rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .round-row.is-winner .round-stepper {
+            display: none;
+        }
+
+        .round-row.is-winner .round-win {
+            display: block;
+        }
+
+        .round-summary {
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: var(--border-radius-sm);
+            background: rgba(99, 102, 241, 0.06);
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .round-summary.is-ready {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--text-color);
+        }
+
+        .round-sheet .swal2-actions {
+            width: 100%;
+            padding: 0 1.25em;
+        }
+
+        .round-sheet .swal2-confirm {
+            flex: 2;
+        }
+
+        .round-sheet .swal2-cancel {
+            flex: 1;
+        }
+
+        .round-sheet .swal2-styled {
+            min-height: 48px;
+            margin: 0.3125em;
+        }
+
+        /* Điện thoại: hiện như khung trượt từ dưới lên */
+        @media (max-width: 600px) {
+            .swal2-container.round-sheet-container {
+                padding: 0;
+            }
+
+            .swal2-popup.round-sheet {
+                width: 100%;
+                margin: 0;
+                border-radius: 20px 20px 0 0;
+                padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            }
+
+            .swal2-popup.round-sheet.swal2-show {
+                animation: roundSheetUp 0.25s ease-out;
+            }
+
+            .round-sheet .swal2-title {
+                padding-top: 16px;
+                font-size: 1.5em;
+            }
+
+            .round-sheet .swal2-html-container {
+                margin: 0.5em 0.75em 0;
+            }
+
+            .round-list {
+                max-height: 50vh;
+            }
+        }
+
+        /* Màn hình rất hẹp (≤ 360px): thu nhỏ nút để tên người chơi còn chỗ hiển thị */
+        @media (max-width: 360px) {
+            .round-row {
+                gap: 4px;
+                padding: 4px 6px 4px 4px;
+            }
+
+            .round-pick {
+                gap: 6px;
+            }
+
+            .round-crown {
+                width: 34px;
+                height: 34px;
+                font-size: 0.85rem;
+            }
+
+            .round-step {
+                width: 36px;
+            }
+
+            .round-points {
+                width: 40px;
+            }
+        }
+
+        @keyframes roundSheetUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
         }
 
         /* Animations */
@@ -967,21 +1203,9 @@
 
         <div class="divider"></div>
 
-        <form id="score-form">
-            <div class="form-group">
-                <label>Nhập Điểm: <i id="score-help-icon" class="fas fa-question-circle text-primary"
-                                     style="cursor: pointer; margin-left: 5px;"></i></label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="score-input" placeholder="1,-,7,5,6">
-                    <button type="submit" id="add-scores" class="btn btn-primary">
-                        <i class="fas fa-plus-circle"></i> Thêm
-                    </button>
-                </div>
-                <!--                <span class="input-help-text">-->
-                <!--                        <i class="fas fa-info-circle"></i> Nếu điểm là dấu gạch ngang (-), điểm của người chơi sẽ là tổng điểm của tất cả các người chơi còn lại-->
-                <!--                    </span>-->
-            </div>
-        </form>
+        <button type="button" id="new-round-button" class="btn btn-primary btn-new-round">
+            <i class="fas fa-plus-circle"></i> Nhập ván mới
+        </button>
 
         <div class="divider"></div>
 
@@ -1185,93 +1409,162 @@
             });
         });
 
-        // Xử lý hiển thị hướng dẫn nhập điểm
-        $('#score-help-icon').click(function () {
-            Swal.fire({
-                title: 'Hướng dẫn nhập điểm',
-                html: `
-                    <div class="text-start">
-                        <p><strong>Cách nhập điểm:</strong></p>
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item">Nhập điểm cho từng người chơi, cách nhau bởi dấu phẩy (,)</li>
-                            <li class="list-group-item">Sử dụng dấu gạch ngang (-) cho người thắng cuộc</li>
-                            <li class="list-group-item">Số lượng điểm phải bằng số lượng người chơi</li>
-                        </ul>
+        // Tên người chơi do người dùng nhập, phải escape trước khi ghép vào HTML của Swal
+        function escapeHtml(text) {
+            var map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'};
+            return String(text).replace(/[&<>"']/g, function (c) { return map[c]; });
+        }
 
-                        <p><strong>Ví dụ:</strong></p>
-                        <div class="alert alert-info">
-                            <p class="mb-2"><strong>Giả sử có 3 người chơi: A, B, C</strong></p>
-                            <p class="mb-1">• Người A thắng, B bị -5 điểm, C bị -3 điểm:</p>
-                            <code>-, 5, 3</code><br><br>
-                            <p class="mb-1">• Người B thắng, A bị -4 điểm, C bị -6 điểm:</p>
-                            <code>4, -, 6</code>
-                        </div>
+        function buildRoundRowHtml(player) {
+            var name = escapeHtml(player.name);
+            return '<div class="round-row">' +
+                '<button type="button" class="round-pick" aria-pressed="false" aria-label="Chọn ' + name + ' thắng ván này">' +
+                '<span class="round-crown"><i class="fas fa-crown"></i></span>' +
+                '<span class="round-name">' + name + '</span>' +
+                '</button>' +
+                '<div class="round-stepper">' +
+                '<button type="button" class="round-step" data-step="-1" aria-label="Giảm 1 điểm">−</button>' +
+                '<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off"' +
+                ' class="round-points" placeholder="0" aria-label="Điểm thua của ' + name + '">' +
+                '<button type="button" class="round-step" data-step="1" aria-label="Tăng 1 điểm">+</button>' +
+                '</div>' +
+                '<span class="round-win"></span>' +
+                '</div>';
+        }
 
-                        <p><strong>Lưu ý:</strong></p>
-                        <ul class="list-group">
-                            <li class="list-group-item text-danger">Phải có ít nhất một dấu gạch ngang (-) để chỉ người thắng</li>
-                            <li class="list-group-item">Người thắng sẽ nhận tổng điểm của những người thua</li>
-                        </ul>
-                    </div>
-                `,
-                icon: 'info',
-                width: '600px'
+        // Đọc bảng nhập: winnerIdx = null khi chưa chọn người thắng; ô trống tính là 0
+        function readRoundState(root) {
+            var winnerIdx = null;
+            var losses = [];
+            $(root).find('.round-row').each(function (i) {
+                if ($(this).hasClass('is-winner')) winnerIdx = i;
+                losses.push(parseInt($(this).find('.round-points').val(), 10) || 0);
             });
-        });
+            var total = losses.reduce(function (sum, value, i) {
+                return i === winnerIdx ? sum : sum + value;
+            }, 0);
+            return {winnerIdx: winnerIdx, losses: losses, total: total};
+        }
 
-        // Xử lý thêm điểm
-        $('#score-form').submit(function (event) {
-            event.preventDefault();
-            scoreInput = $('#score-input').val();
+        function isRoundReady(state) {
+            return state.winnerIdx !== null && state.total > 0;
+        }
 
-            if (players.length === 0) {
+        function refreshRoundSheet(root) {
+            var state = readRoundState(root);
+            var message = 'Chạm vào tên để chọn người thắng';
+            if (state.winnerIdx !== null && state.total === 0) {
+                message = 'Nhập điểm thua cho ít nhất một người';
+            } else if (isRoundReady(state)) {
+                message = '<strong>' + escapeHtml(players[state.winnerIdx].name) + '</strong> nhận <strong>' +
+                    state.total + '</strong> điểm';
+            }
+            $(root).find('.round-win').text('+' + state.total);
+            $(root).find('.round-summary').toggleClass('is-ready', isRoundReady(state)).html(message);
+            Swal.getConfirmButton().disabled = !isRoundReady(state);
+        }
+
+        // Gắn sự kiện vào .round-form (tạo mới mỗi lần mở) nên không cần .off()
+        function bindRoundSheet(root) {
+            var $root = $(root);
+            $root.on('click', '.round-pick', function () {
+                var $row = $(this).closest('.round-row');
+                var wasWinner = $row.hasClass('is-winner');
+                $root.find('.round-row').removeClass('is-winner').find('.round-pick').attr('aria-pressed', 'false');
+                if (!wasWinner) {
+                    $row.addClass('is-winner');
+                    $(this).attr('aria-pressed', 'true');
+                }
+                refreshRoundSheet(root);
+            });
+            $root.on('click', '.round-step', function () {
+                var $input = $(this).siblings('.round-points');
+                var next = Math.max(0, (parseInt($input.val(), 10) || 0) + Number($(this).data('step')));
+                $input.val(next || '');
+                refreshRoundSheet(root);
+            });
+            $root.on('input', '.round-points', function () {
+                this.value = this.value.replace(/\D/g, '');
+                refreshRoundSheet(root);
+            });
+            // Enter: sang ô của người thua kế tiếp, ô cuối thì lưu ván
+            $root.on('keydown', '.round-points', function (event) {
+                if (event.key !== 'Enter') return;
+                event.preventDefault();
+                var $inputs = $root.find('.round-row:not(.is-winner) .round-points');
+                var next = $inputs.get($inputs.index(this) + 1);
+                if (next) {
+                    next.focus();
+                } else {
+                    Swal.clickConfirm();
+                }
+            });
+        }
+
+        // Người thắng nhận đúng tổng điểm người thua, nên tổng mỗi ván luôn bằng 0
+        function saveRound(state) {
+            var roundPlayers = players.map(function (player, i) {
+                var points = i === state.winnerIdx ? state.total : -state.losses[i];
+                return {name: player.name, score: points || 0}; // tránh lưu -0
+            });
+            players = players.map(function (player, i) {
+                return Object.assign({}, player, {score: player.score + roundPlayers[i].score});
+            });
+            matches = matches.concat([{timestamp: Date.now(), players: roundPlayers}]);
+            localStorage.setItem('players', JSON.stringify(players));
+            localStorage.setItem('matches', JSON.stringify(matches));
+            renderTable();
+            Swal.fire({
+                toast: true,
+                position: 'top',
+                icon: 'success',
+                title: 'Đã lưu ván ' + matches.length,
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+
+        // Mở bảng nhập điểm: điện thoại hiện khung trượt từ dưới lên, màn hình rộng hiện giữa
+        $('#new-round-button').click(function () {
+            if (players.length < 2) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Chưa có người chơi',
-                    text: 'Vui lòng thêm người chơi trước khi nhập điểm!'
+                    title: 'Chưa đủ người chơi',
+                    text: 'Thêm ít nhất 2 người chơi để nhập điểm.'
                 });
                 return;
             }
 
-            var scores = scoreInput.split(',');
-
-            if (!validateInput(scoreInput)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Định dạng không hợp lệ',
-                    html: '1. Chỉ cho phép số, dấu phẩy và dấu gạch ngang!<br>2. Phải có ít nhất một dấu gạch ngang (-).',
-                })
-            } else if (scores.length !== players.length) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Số lượng không khớp',
-                    text: 'Số điểm nhập (' + scores.length + ') không khớp với số lượng người chơi (' + players.length + ')!'
-                })
-            } else {
-                var matchData = {
-                    timestamp: new Date().getTime(),
-                    players: []
-                };
-                for (var i = 0; i < players.length; i++) {
-                    var score = scores[i].trim();
-                    if (score === '-') {
-                        // Tính điểm cho người chơi này là tổng điểm của tất cả người chơi khác
-                        var points = sumNumericValues(scores);
-                    } else {
-                        var points = -parseInt(score);
+            var isPhone = window.matchMedia('(max-width: 600px)').matches;
+            Swal.fire({
+                title: 'Ván ' + (matches.length + 1),
+                html: '<div class="round-form">' +
+                    '<p class="round-hint">Chạm vào tên người thắng, rồi nhập số điểm mỗi người thua.</p>' +
+                    '<div class="round-list">' + players.map(buildRoundRowHtml).join('') + '</div>' +
+                    '<div class="round-summary" aria-live="polite"></div>' +
+                    '</div>',
+                position: isPhone ? 'bottom' : 'center',
+                customClass: {container: 'round-sheet-container', popup: 'round-sheet'},
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-check"></i> Lưu ván',
+                cancelButtonText: 'Hủy',
+                focusConfirm: false,
+                didOpen: function (popup) {
+                    var root = popup.querySelector('.round-form');
+                    bindRoundSheet(root);
+                    refreshRoundSheet(root);
+                },
+                preConfirm: function () {
+                    var state = readRoundState(Swal.getPopup().querySelector('.round-form'));
+                    if (!isRoundReady(state)) {
+                        Swal.showValidationMessage('Chọn người thắng và nhập điểm thua trước khi lưu');
+                        return false;
                     }
-                    players[i].score += points;
-                    matchData.players.push({
-                        name: players[i].name,
-                        score: points
-                    });
+                    return state;
                 }
-                matches.push(matchData);
-                localStorage.setItem('players', JSON.stringify(players));
-                localStorage.setItem('matches', JSON.stringify(matches));
-                renderTable();
-                $('#score-input').val('').focus();
-            }
+            }).then(function (result) {
+                if (result.isConfirmed) saveRound(result.value);
+            });
         });
 
         // Hàm xóa toàn bộ dữ liệu (dùng chung)
@@ -1808,29 +2101,6 @@
             });
 
             previousDisplayedScores = newDisplayedScores;
-        }
-
-        // Tính tổng các giá trị số
-        function sumNumericValues(values) {
-            let sum = 0;
-            for (let i = 0; i < values.length; i++) {
-                const value = values[i].trim();
-                if (value !== '-' && !isNaN(Number(value))) {
-                    sum += Number(value);
-                }
-            }
-            return sum;
-        }
-
-        // Kiểm tra dữ liệu đầu vào hợp lệ
-        function validateInput(inputString) {
-            // Kiểm tra định dạng hợp lệ (chỉ cho phép số, dấu phẩy, dấu gạch ngang và khoảng trắng)
-            var regex = /^[\d,-\s]+$/;
-
-            // Kiểm tra xem có ít nhất một dấu '-' không
-            var hasNegativeSign = inputString.includes('-');
-
-            return regex.test(inputString) && hasNegativeSign;
         }
 
         // Áp dụng theme khi tải trang
