@@ -25,13 +25,13 @@ Verification is manual — load the page and exercise the flow you touched (add 
 | 27–68 | `:root` design tokens (colors, gradients, radii, shadows, transition) |
 | 54–68 | `body.dark-mode` token overrides |
 | 70–432 | Layout, forms, buttons, player table, theme toggle |
-| 433–680 | Round-entry sheet styles (`.round-*`): bottom sheet ≤ 600px, compact ≤ 360px |
-| 681–780 | Keyframes, `@media (max-width: 768px)`, empty state |
-| 781–1050 | History-modal styles (`.history-*`) |
-| 1051–1178 | Dark-mode overrides for SweetAlert2 and Bootstrap classes |
-| 1182–1243 | Body markup — the entire static DOM |
-| 1244 | jQuery loads here, *before* the app script; keep that order |
-| 1245–2108 | The whole application, inside one `$(function () { ... })` closure |
+| 433–610 | Round-entry wizard styles (`.round-*`); on ≤ 600px the popup sits at the top so the keyboard never covers it |
+| 611–710 | Keyframes, `@media (max-width: 768px)`, empty state |
+| 711–980 | History-modal styles (`.history-*`) |
+| 981–1108 | Dark-mode overrides for SweetAlert2 and Bootstrap classes |
+| 1112–1173 | Body markup — the entire static DOM |
+| 1174 | jQuery loads here, *before* the app script; keep that order |
+| 1175–2064 | The whole application, inside one `$(function () { ... })` closure |
 
 ## Data model
 
@@ -42,36 +42,38 @@ players = [{ name, score }]                                  // running totals
 matches = [{ timestamp, players: [{ name, score }] }]         // per-round deltas
 ```
 
-- **Totals are denormalized.** `players[i].score` is an accumulated sum, not derived from `matches` at render time. Any code that mutates `matches` must adjust `players[].score` itself — see `deleteMatchAt` ([index.html:1771](index.html#L1771)), which subtracts the round back out.
-- **`name` is the join key** between the two arrays. Duplicate or renamed players corrupt totals. The history modal rebuilds its column list from *both* arrays (`recomputeTotals`, [index.html:1621](index.html#L1621)) so players no longer in the roster still show up.
-- **Persistence** is `localStorage` under `players`, `matches`, `theme`. The convention throughout: mutate the array → `localStorage.setItem` → `renderTable()`. `renderTable()` ([index.html:2027](index.html#L2027)) is the only re-render path for the main table.
+- **Totals are denormalized.** `players[i].score` is an accumulated sum, not derived from `matches` at render time. Any code that mutates `matches` must adjust `players[].score` itself — see `deleteMatchAt` ([index.html:1727](index.html#L1727)), which subtracts the round back out.
+- **`name` is the join key** between the two arrays. Duplicate or renamed players corrupt totals. The history modal rebuilds its column list from *both* arrays (`recomputeTotals`, [index.html:1577](index.html#L1577)) so players no longer in the roster still show up.
+- **Persistence** is `localStorage` under `players`, `matches`, `theme`. The convention throughout: mutate the array → `localStorage.setItem` → `renderTable()`. `renderTable()` ([index.html:1983](index.html#L1983)) is the only re-render path for the main table.
 
 ## Score entry semantics
 
-`#new-round-button` ([index.html:1528](index.html#L1528)) opens a Swal sheet with one row per player (bottom sheet on phones, centered dialog otherwise). The user taps a name to mark the single winner, then enters each loser's points (non-negative integers, `inputmode="numeric"`, blank = 0, ±1 steppers). `readRoundState` ([index.html:1436](index.html#L1436)) returns `{winnerIdx, losses, total}`; "Lưu ván" stays disabled until a winner is chosen and `total > 0`.
+`#new-round-button` ([index.html:1502](index.html#L1502)) opens one Swal popup that runs a two-step wizard, all inside `bindRoundWizard` ([index.html:1403](index.html#L1403)): first "Ai thắng ván này?" (one button per player), then one screen per loser in roster order — a single numeric input (`inputmode="numeric"`, blank = 0), "Lưu" moves to the next loser, the last one shows "Lưu ván". Chips let the user jump to any loser; "Quay lại" steps back (to the winner screen from the first loser). The input element is reused across steps and buttons `preventDefault` on `mousedown`, so the phone keyboard stays open; focus is called inside the tap handler so iOS opens it.
 
-`saveRound` ([index.html:1505](index.html#L1505)) stores losers as `-loss` and credits the winner `total`, so every new round sums to zero. Rounds saved by the old comma-separated input could contain two winners and a non-zero total — "Chia Tiền" still refuses to split those, so don't assume the zero-sum invariant for old data.
+Wizard state is `{winnerIdx, pos, losses}` (`losses` = raw strings per player index), replaced with `Object.assign` on every step. Closing the popup discards the round. The last step refuses a round whose loser total is 0.
 
-Player names go into Swal HTML through `escapeHtml` ([index.html:1413](index.html#L1413)); the older dialogs (history, split) still concatenate names unescaped.
+`saveRound` ([index.html:1478](index.html#L1478)) stores losers as `-loss` and credits the winner `total`, so every new round sums to zero. Rounds saved by the old comma-separated input could contain two winners and a non-zero total — "Chia Tiền" still refuses to split those, so don't assume the zero-sum invariant for old data.
+
+Player names go into Swal HTML through `escapeHtml` ([index.html:1343](index.html#L1343)); the older dialogs (history, split) still concatenate names unescaped.
 
 ## Money split
 
-`#split-button` ([index.html:1834](index.html#L1834)) works on a copy of `players`, aborts unless the grand total is ≈ 0, then greedily pairs debtors with creditors, transferring `min(|debt|, credit)` per transaction.
+`#split-button` ([index.html:1790](index.html#L1790)) works on a copy of `players`, aborts unless the grand total is ≈ 0, then greedily pairs debtors with creditors, transferring `min(|debt|, credit)` per transaction.
 
 ## Share links
 
-`#share-button` ([index.html:1946](index.html#L1946)) serializes `{players, matches}` to JSON, compresses with `LZString.compressToEncodedURIComponent`, and appends `?data=...` to `origin + pathname`. On load, `?data=` is decompressed and **overwrites localStorage without confirmation** ([index.html:1260](index.html#L1260)).
+`#share-button` ([index.html:1902](index.html#L1902)) serializes `{players, matches}` to JSON, compresses with `LZString.compressToEncodedURIComponent`, and appends `?data=...` to `origin + pathname`. On load, `?data=` is decompressed and **overwrites localStorage without confirmation** ([index.html:1190](index.html#L1190)).
 
 ## SweetAlert2 is the entire modal layer
 
 Every dialog — round entry, history, split results, confirmations, share — is a `Swal.fire` whose `html` is built by string concatenation. Consequences to respect:
 
-- Modal DOM is re-created on each open, so handlers must be bound in `didOpen` and use `.off().on()` (`attachHandlers`, [index.html:1784](index.html#L1784)). Deleting a history row simply re-opens the modal to refresh it.
-- Swal renders outside `.app-container`, so dark mode for dialog content requires explicit `body.dark-mode .swal2-*` / Bootstrap-class overrides in the 1051–1178 block. The round-entry sheet needs none: it only uses CSS variables, which `body.dark-mode` already redefines. New dialog markup usually needs a matching override there.
+- Modal DOM is re-created on each open, so handlers must be bound in `didOpen` and use `.off().on()` (`attachHandlers`, [index.html:1740](index.html#L1740)). Deleting a history row simply re-opens the modal to refresh it.
+- Swal renders outside `.app-container`, so dark mode for dialog content requires explicit `body.dark-mode .swal2-*` / Bootstrap-class overrides in the 981–1108 block. The round-entry wizard needs none: it only uses CSS variables, which `body.dark-mode` already redefines. New dialog markup usually needs a matching override there.
 
 ## Theming
 
-CSS custom properties on `:root`, re-declared under `body.dark-mode`; the toggle adds/removes the class on `<body>` and persists `theme`. A new color must be added to **both** blocks, and `applyTheme()`/`updateThemeIcon()` ([index.html:2009](index.html#L2009)) keep the icon in sync.
+CSS custom properties on `:root`, re-declared under `body.dark-mode`; the toggle adds/removes the class on `<body>` and persists `theme`. A new color must be added to **both** blocks, and `applyTheme()`/`updateThemeIcon()` ([index.html:1965](index.html#L1965)) keep the icon in sync.
 
 ## Score animation
 

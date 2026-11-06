@@ -436,245 +436,175 @@
             font-size: 1.05rem;
         }
 
-        /* Bảng nhập điểm một ván */
-        .round-hint {
-            margin: 0 0 12px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            text-align: left;
+        /* Nhập điểm từng bước: chọn người thắng, rồi lần lượt từng người thua */
+        .round-question {
+            margin: 0 0 14px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-color);
         }
 
-        .round-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 55vh;
-            overflow-y: auto;
-            padding: 2px;
-            text-align: left;
+        .round-winner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
         }
 
-        .round-row {
+        .round-winner-option {
+            min-height: 56px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            min-height: 60px;
-            padding: 6px 8px 6px 6px;
             border: 1.5px solid var(--border-color);
             border-radius: var(--border-radius-sm);
             background: var(--card-bg);
-            transition: var(--transition);
-        }
-
-        .round-row.is-winner {
-            border-color: var(--warning-color);
-            background: rgba(245, 158, 11, 0.08);
-        }
-
-        .round-pick {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-height: 48px;
-            padding: 0 4px;
-            border: none;
-            background: none;
             color: var(--text-color);
-            text-align: left;
+            font-size: 1.05rem;
+            font-weight: 600;
+            overflow-wrap: anywhere;
             cursor: pointer;
-        }
-
-        .round-crown {
-            flex: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1.5px dashed var(--border-color);
-            color: var(--text-muted);
-            font-size: 1rem;
+            touch-action: manipulation;
             transition: var(--transition);
         }
 
-        .round-row.is-winner .round-crown {
-            border: none;
-            background: var(--warning-color);
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
+        .round-winner-option i {
+            color: var(--warning-color);
         }
 
-        .round-name {
-            font-weight: 600;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .round-winner-option:hover,
+        .round-winner-option:active {
+            border-color: var(--warning-color);
+            background: rgba(245, 158, 11, 0.1);
         }
 
-        .round-stepper {
-            flex: none;
+        .round-context {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .round-context i {
+            color: var(--warning-color);
+        }
+
+        .round-chips {
             display: flex;
-            align-items: center;
-            border: 1.5px solid var(--border-color);
-            border-radius: var(--border-radius-sm);
-            overflow: hidden;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 16px;
         }
 
-        .round-step {
-            width: 44px;
-            height: 44px;
-            border: none;
-            background: rgba(99, 102, 241, 0.08);
-            color: var(--primary-color);
-            font-size: 1.3rem;
-            font-weight: 700;
-            line-height: 1;
+        .round-chip {
+            padding: 4px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.85rem;
             cursor: pointer;
             touch-action: manipulation;
         }
 
-        .round-step:active {
-            background: rgba(99, 102, 241, 0.2);
+        .round-chip span {
+            margin-left: 4px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .round-chip.is-current {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+
+        label.round-loser-name {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
         }
 
         .round-points {
-            width: 52px;
-            height: 44px;
-            border: none;
-            background: transparent;
+            display: block;
+            width: 100%;
+            max-width: 220px;
+            height: 64px;
+            margin: 0 auto;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            background: var(--card-bg);
             color: var(--text-color);
             text-align: center;
-            font-size: 1.15rem;
+            font-size: 2rem;
             font-weight: 700;
             font-variant-numeric: tabular-nums;
         }
 
         .round-points:focus {
             outline: none;
-            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
         .round-points::placeholder {
             color: var(--text-muted);
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
-        .round-win {
-            flex: none;
-            display: none;
-            padding-right: 8px;
-            color: var(--success-color);
-            font-weight: 700;
-            font-size: 1.15rem;
-            font-variant-numeric: tabular-nums;
+        .round-error {
+            min-height: 1.5em;
+            margin-top: 6px;
+            color: var(--danger-color);
+            font-size: 0.9rem;
         }
 
-        .round-row.is-winner .round-stepper {
-            display: none;
+        .round-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
         }
 
-        .round-row.is-winner .round-win {
-            display: block;
-        }
-
-        .round-summary {
-            margin-top: 14px;
+        .round-actions .btn {
+            flex: 1;
             padding: 10px 12px;
-            border-radius: var(--border-radius-sm);
-            background: rgba(99, 102, 241, 0.06);
-            font-size: 0.95rem;
-            color: var(--text-muted);
+            white-space: nowrap;
         }
 
-        .round-summary.is-ready {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--text-color);
-        }
-
-        .round-sheet .swal2-actions {
-            width: 100%;
-            padding: 0 1.25em;
-        }
-
-        .round-sheet .swal2-confirm {
+        .round-actions .round-next {
             flex: 2;
         }
 
-        .round-sheet .swal2-cancel {
-            flex: 1;
+        .round-back {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
         }
 
-        .round-sheet .swal2-styled {
-            min-height: 48px;
-            margin: 0.3125em;
+        .round-back:hover {
+            color: var(--primary-color);
         }
 
-        /* Điện thoại: hiện như khung trượt từ dưới lên */
+        /* Điện thoại: popup nằm sát trên cùng để bàn phím số không che nút Lưu */
         @media (max-width: 600px) {
-            .swal2-container.round-sheet-container {
+            .swal2-popup.round-popup {
+                width: calc(100% - 8px);
+            }
+
+            .round-popup .swal2-title {
+                padding-top: 16px;
+                font-size: 1.4em;
+            }
+
+            .round-popup .swal2-html-container {
+                margin: 0.75em 1em 1em;
                 padding: 0;
             }
 
-            .swal2-popup.round-sheet {
-                width: 100%;
-                margin: 0;
-                border-radius: 20px 20px 0 0;
-                padding-bottom: calc(12px + env(safe-area-inset-bottom));
-            }
-
-            .swal2-popup.round-sheet.swal2-show {
-                animation: roundSheetUp 0.25s ease-out;
-            }
-
-            .round-sheet .swal2-title {
-                padding-top: 16px;
-                font-size: 1.5em;
-            }
-
-            .round-sheet .swal2-html-container {
-                margin: 0.5em 0.75em 0;
-            }
-
-            .round-list {
-                max-height: 50vh;
-            }
-        }
-
-        /* Màn hình rất hẹp (≤ 360px): thu nhỏ nút để tên người chơi còn chỗ hiển thị */
-        @media (max-width: 360px) {
-            .round-row {
-                gap: 4px;
-                padding: 4px 6px 4px 4px;
-            }
-
-            .round-pick {
-                gap: 6px;
-            }
-
-            .round-crown {
-                width: 34px;
-                height: 34px;
-                font-size: 0.85rem;
-            }
-
-            .round-step {
-                width: 36px;
-            }
-
-            .round-points {
-                width: 40px;
-            }
-        }
-
-        @keyframes roundSheetUp {
-            from {
-                transform: translateY(100%);
-            }
-            to {
-                transform: translateY(0);
+            .round-winner-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
@@ -1415,96 +1345,139 @@
             return String(text).replace(/[&<>"']/g, function (c) { return map[c]; });
         }
 
-        function buildRoundRowHtml(player) {
-            var name = escapeHtml(player.name);
-            return '<div class="round-row">' +
-                '<button type="button" class="round-pick" aria-pressed="false" aria-label="Chọn ' + name + ' thắng ván này">' +
-                '<span class="round-crown"><i class="fas fa-crown"></i></span>' +
-                '<span class="round-name">' + name + '</span>' +
-                '</button>' +
-                '<div class="round-stepper">' +
-                '<button type="button" class="round-step" data-step="-1" aria-label="Giảm 1 điểm">−</button>' +
-                '<input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off"' +
-                ' class="round-points" placeholder="0" aria-label="Điểm thua của ' + name + '">' +
-                '<button type="button" class="round-step" data-step="1" aria-label="Tăng 1 điểm">+</button>' +
+        // Vị trí (trong players) của những người thua, theo thứ tự danh sách
+        function loserIndexes(winnerIdx) {
+            return players.map(function (_, i) { return i; }).filter(function (i) { return i !== winnerIdx; });
+        }
+
+        // losses giữ chuỗi người dùng gõ cho từng người; ô trống tính là 0
+        function sumLosses(losses, winnerIdx) {
+            return losses.reduce(function (sum, value, i) {
+                return i === winnerIdx ? sum : sum + (parseInt(value, 10) || 0);
+            }, 0);
+        }
+
+        function buildRoundWizardHtml() {
+            var winnerOptions = players.map(function (player, i) {
+                return '<button type="button" class="round-winner-option" data-idx="' + i + '">' +
+                    '<i class="fas fa-crown"></i> ' + escapeHtml(player.name) + '</button>';
+            }).join('');
+            return '<div class="round-wizard">' +
+                '<div data-pane="winner">' +
+                '<p class="round-question">Ai thắng ván này?</p>' +
+                '<div class="round-winner-grid">' + winnerOptions + '</div>' +
                 '</div>' +
-                '<span class="round-win"></span>' +
+                '<div data-pane="loser" hidden>' +
+                '<div class="round-context"></div>' +
+                '<div class="round-chips"></div>' +
+                '<label class="round-loser-name" for="round-points"></label>' +
+                '<input id="round-points" class="round-points" type="text" inputmode="numeric" pattern="[0-9]*"' +
+                ' maxlength="3" autocomplete="off" placeholder="0">' +
+                '<div class="round-error" role="alert"></div>' +
+                '<div class="round-actions">' +
+                '<button type="button" class="btn round-back"><i class="fas fa-arrow-left"></i> Quay lại</button>' +
+                '<button type="button" class="btn btn-primary round-next"></button>' +
+                '</div>' +
+                '</div>' +
                 '</div>';
         }
 
-        // Đọc bảng nhập: winnerIdx = null khi chưa chọn người thắng; ô trống tính là 0
-        function readRoundState(root) {
-            var winnerIdx = null;
-            var losses = [];
-            $(root).find('.round-row').each(function (i) {
-                if ($(this).hasClass('is-winner')) winnerIdx = i;
-                losses.push(parseInt($(this).find('.round-points').val(), 10) || 0);
-            });
-            var total = losses.reduce(function (sum, value, i) {
-                return i === winnerIdx ? sum : sum + value;
-            }, 0);
-            return {winnerIdx: winnerIdx, losses: losses, total: total};
+        // Vẽ lại phần người thua theo state; không đụng vào giá trị ô nhập
+        function renderLoserPane($root, state) {
+            var losers = loserIndexes(state.winnerIdx);
+            var isLast = state.pos === losers.length - 1;
+            $root.find('.round-context').html('<i class="fas fa-crown"></i> <strong>' +
+                escapeHtml(players[state.winnerIdx].name) + '</strong> thắng · đang được <strong>+' +
+                sumLosses(state.losses, state.winnerIdx) + '</strong>');
+            $root.find('.round-chips').html(losers.map(function (idx, pos) {
+                var value = state.losses[idx] === '' ? '–' : state.losses[idx];
+                return '<button type="button" class="round-chip' + (pos === state.pos ? ' is-current' : '') +
+                    '" data-pos="' + pos + '">' + escapeHtml(players[idx].name) + '<span>' + value + '</span></button>';
+            }).join(''));
+            $root.find('.round-loser-name').text(players[losers[state.pos]].name + ' thua bao nhiêu điểm?');
+            $root.find('.round-next').html(isLast ? '<i class="fas fa-check"></i> Lưu ván' : 'Lưu <i class="fas fa-arrow-right"></i>');
+            $root.find('.round-points').attr('enterkeyhint', isLast ? 'done' : 'next');
         }
 
-        function isRoundReady(state) {
-            return state.winnerIdx !== null && state.total > 0;
-        }
-
-        function refreshRoundSheet(root) {
-            var state = readRoundState(root);
-            var message = 'Chạm vào tên để chọn người thắng';
-            if (state.winnerIdx !== null && state.total === 0) {
-                message = 'Nhập điểm thua cho ít nhất một người';
-            } else if (isRoundReady(state)) {
-                message = '<strong>' + escapeHtml(players[state.winnerIdx].name) + '</strong> nhận <strong>' +
-                    state.total + '</strong> điểm';
-            }
-            $(root).find('.round-win').text('+' + state.total);
-            $(root).find('.round-summary').toggleClass('is-ready', isRoundReady(state)).html(message);
-            Swal.getConfirmButton().disabled = !isRoundReady(state);
-        }
-
-        // Gắn sự kiện vào .round-form (tạo mới mỗi lần mở) nên không cần .off()
-        function bindRoundSheet(root) {
+        // state: winnerIdx = null khi đang hỏi người thắng; pos = thứ tự người thua đang nhập
+        function bindRoundWizard(root) {
             var $root = $(root);
-            $root.on('click', '.round-pick', function () {
-                var $row = $(this).closest('.round-row');
-                var wasWinner = $row.hasClass('is-winner');
-                $root.find('.round-row').removeClass('is-winner').find('.round-pick').attr('aria-pressed', 'false');
-                if (!wasWinner) {
-                    $row.addClass('is-winner');
-                    $(this).attr('aria-pressed', 'true');
+            var input = root.querySelector('.round-points');
+            var state = {winnerIdx: null, pos: 0, losses: players.map(function () { return ''; })};
+
+            function currentLoser() {
+                return loserIndexes(state.winnerIdx)[state.pos];
+            }
+
+            function lossesWithInput() {
+                var losses = state.losses.slice();
+                losses[currentLoser()] = input.value;
+                return losses;
+            }
+
+            function goTo(changes) {
+                state = Object.assign({}, state, changes);
+                var askWinner = state.winnerIdx === null;
+                $root.find('[data-pane="winner"]').prop('hidden', !askWinner);
+                $root.find('[data-pane="loser"]').prop('hidden', askWinner);
+                $root.find('.round-error').text('');
+                if (askWinner) return;
+                renderLoserPane($root, state);
+                input.value = state.losses[currentLoser()];
+                // Gọi focus ngay trong lúc xử lý chạm để iOS mở bàn phím số
+                input.focus();
+            }
+
+            function next() {
+                var losses = lossesWithInput();
+                if (state.pos < loserIndexes(state.winnerIdx).length - 1) {
+                    goTo({losses: losses, pos: state.pos + 1});
+                    return;
                 }
-                refreshRoundSheet(root);
+                var total = sumLosses(losses, state.winnerIdx);
+                if (total === 0) {
+                    $root.find('.round-error').text('Cần ít nhất một người thua điểm');
+                    return;
+                }
+                Swal.close();
+                saveRound({
+                    winnerIdx: state.winnerIdx,
+                    losses: losses.map(function (value) { return parseInt(value, 10) || 0; }),
+                    total: total
+                });
+            }
+
+            $root.on('click', '.round-winner-option', function () {
+                goTo({winnerIdx: Number($(this).data('idx')), pos: 0});
             });
-            $root.on('click', '.round-step', function () {
-                var $input = $(this).siblings('.round-points');
-                var next = Math.max(0, (parseInt($input.val(), 10) || 0) + Number($(this).data('step')));
-                $input.val(next || '');
-                refreshRoundSheet(root);
+            $root.on('click', '.round-chip', function () {
+                goTo({losses: lossesWithInput(), pos: Number($(this).data('pos'))});
+            });
+            $root.on('click', '.round-back', function () {
+                var changes = state.pos === 0 ? {winnerIdx: null} : {pos: state.pos - 1};
+                goTo(Object.assign({losses: lossesWithInput()}, changes));
+            });
+            $root.on('click', '.round-next', next);
+            // Chặn mousedown trên nút để ô nhập không mất focus, bàn phím không bị đóng rồi mở lại
+            $root.on('mousedown', '.round-next, .round-back, .round-chip', function (event) {
+                event.preventDefault();
             });
             $root.on('input', '.round-points', function () {
                 this.value = this.value.replace(/\D/g, '');
-                refreshRoundSheet(root);
+                $root.find('.round-error').text('');
+                renderLoserPane($root, Object.assign({}, state, {losses: lossesWithInput()}));
             });
-            // Enter: sang ô của người thua kế tiếp, ô cuối thì lưu ván
             $root.on('keydown', '.round-points', function (event) {
                 if (event.key !== 'Enter') return;
                 event.preventDefault();
-                var $inputs = $root.find('.round-row:not(.is-winner) .round-points');
-                var next = $inputs.get($inputs.index(this) + 1);
-                if (next) {
-                    next.focus();
-                } else {
-                    Swal.clickConfirm();
-                }
+                next();
             });
         }
 
         // Người thắng nhận đúng tổng điểm người thua, nên tổng mỗi ván luôn bằng 0
-        function saveRound(state) {
+        function saveRound(round) {
             var roundPlayers = players.map(function (player, i) {
-                var points = i === state.winnerIdx ? state.total : -state.losses[i];
+                var points = i === round.winnerIdx ? round.total : -round.losses[i];
                 return {name: player.name, score: points || 0}; // tránh lưu -0
             });
             players = players.map(function (player, i) {
@@ -1518,13 +1491,14 @@
                 toast: true,
                 position: 'top',
                 icon: 'success',
-                title: 'Đã lưu ván ' + matches.length,
-                timer: 1500,
+                title: 'Đã lưu ván ' + matches.length + ' · ' + escapeHtml(players[round.winnerIdx].name) +
+                    ' +' + round.total,
+                timer: 2000,
                 showConfirmButton: false
             });
         }
 
-        // Mở bảng nhập điểm: điện thoại hiện khung trượt từ dưới lên, màn hình rộng hiện giữa
+        // Thêm ván: hỏi ai thắng, rồi hỏi lần lượt từng người thua
         $('#new-round-button').click(function () {
             if (players.length < 2) {
                 Swal.fire({
@@ -1535,35 +1509,17 @@
                 return;
             }
 
-            var isPhone = window.matchMedia('(max-width: 600px)').matches;
             Swal.fire({
                 title: 'Ván ' + (matches.length + 1),
-                html: '<div class="round-form">' +
-                    '<p class="round-hint">Chạm vào tên người thắng, rồi nhập số điểm mỗi người thua.</p>' +
-                    '<div class="round-list">' + players.map(buildRoundRowHtml).join('') + '</div>' +
-                    '<div class="round-summary" aria-live="polite"></div>' +
-                    '</div>',
-                position: isPhone ? 'bottom' : 'center',
-                customClass: {container: 'round-sheet-container', popup: 'round-sheet'},
-                showCancelButton: true,
-                confirmButtonText: '<i class="fas fa-check"></i> Lưu ván',
-                cancelButtonText: 'Hủy',
-                focusConfirm: false,
+                html: buildRoundWizardHtml(),
+                position: window.matchMedia('(max-width: 600px)').matches ? 'top' : 'center',
+                customClass: {popup: 'round-popup'},
+                showConfirmButton: false,
+                showCloseButton: true,
+                allowOutsideClick: false,
                 didOpen: function (popup) {
-                    var root = popup.querySelector('.round-form');
-                    bindRoundSheet(root);
-                    refreshRoundSheet(root);
-                },
-                preConfirm: function () {
-                    var state = readRoundState(Swal.getPopup().querySelector('.round-form'));
-                    if (!isRoundReady(state)) {
-                        Swal.showValidationMessage('Chọn người thắng và nhập điểm thua trước khi lưu');
-                        return false;
-                    }
-                    return state;
+                    bindRoundWizard(popup.querySelector('.round-wizard'));
                 }
-            }).then(function (result) {
-                if (result.isConfirmed) saveRound(result.value);
             });
         });
 
